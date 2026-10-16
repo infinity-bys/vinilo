@@ -218,6 +218,7 @@ function meta(s){
   setTitle(d.t);$('#mTitle').textContent=d.t;$('#sub').textContent=d.a||mb(s.size);
   const lab=$('#lab');lab.classList.toggle('on',!!u);lab.style.backgroundImage=u?`url(${u})`:'';
   $('#md').style.background=u?`center/cover url(${u})`:'';
+  if(NATIVE){pushMedia('');if(s.cover)blobB64(s.cover).then(b=>{if(cur===s.id&&b)pushMedia(b)})}
   if('mediaSession' in navigator)navigator.mediaSession.metadata=new MediaMetadata({title:d.t,artist:d.a||'Vinilo',artwork:u?[{src:u,sizes:'512x512'}]:[]});
 }
 // ---------- Lista ----------
@@ -382,11 +383,25 @@ const NATIVE=!!(window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNative
 const ML=NATIVE?(Capacitor.registerPlugin?Capacitor.registerPlugin('MusicLibrary'):Capacitor.Plugins.MusicLibrary):null;
 if(NATIVE)document.querySelector('.bar h1').insertAdjacentHTML('beforeend',' <small style="font:12px system-ui;color:var(--acc)">Android</small>');
 if(NATIVE)document.querySelectorAll('#addBtn,#dirBtn').forEach(b=>b.remove());
-// Mantiene la música sonando con la pantalla apagada o la app minimizada
-let ka;
+// Notificación de música (carátula, tiempo y controles) + segundo plano
+const blobB64=b=>new Promise(r=>{const f=new FileReader();f.onload=()=>r(String(f.result).split(',')[1]||'');f.onerror=()=>r('');f.readAsDataURL(b)});
+function pushMedia(c){
+  if(!NATIVE||cur===null)return;
+  const s=songs.find(x=>x.id===cur);if(!s)return;const d=dsp(s);
+  const o={title:d.t,artist:d.a||'Vinilo',playing:!audio.paused,pos:audio.currentTime||0,dur:isFinite(audio.duration)?audio.duration:0};
+  if(c!==undefined)o.cover=c;
+  ML.updateMedia(o).catch(()=>{});
+}
 if(NATIVE){
-  audio.addEventListener('play',()=>{clearTimeout(ka);ML.keepAlive({on:true}).catch(()=>{})});
-  audio.addEventListener('pause',()=>{clearTimeout(ka);ka=setTimeout(()=>{if(audio.paused)ML.keepAlive({on:false}).catch(()=>{})},4000)});
+  audio.addEventListener('play',()=>{ML.keepAlive({on:true}).catch(()=>{});pushMedia()});
+  ['pause','seeked','loadedmetadata'].forEach(ev=>audio.addEventListener(ev,()=>pushMedia()));
+  try{ML.addListener('mediaAction',e=>{
+    if(e.action==='play')audio.play();
+    else if(e.action==='pause')audio.pause();
+    else if(e.action==='next')step(1);
+    else if(e.action==='prev')step(-1);
+    else if(e.action==='seek')audio.currentTime=e.pos;
+  })}catch(e){}
 }
 let nat=[],scanning=false,covering=false;
 async function scanPhone(){
