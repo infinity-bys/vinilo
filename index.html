@@ -377,7 +377,7 @@ function draw(){
 
 // ---------- App Android (Capacitor): lee la música del teléfono ----------
 const NATIVE=!!(window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform());
-const ML=NATIVE?Capacitor.registerPlugin('MusicLibrary'):null;
+const ML=NATIVE?(Capacitor.registerPlugin?Capacitor.registerPlugin('MusicLibrary'):Capacitor.Plugins.MusicLibrary):null;
 if(NATIVE)document.querySelector('.bar h1').insertAdjacentHTML('beforeend',' <small style="font:12px system-ui;color:var(--acc)">Android</small>');
 let nat=[],scanning=false,covering=false;
 async function scanPhone(){
