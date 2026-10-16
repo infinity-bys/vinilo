@@ -294,6 +294,8 @@ function setView(v){
 function openPlayer(){if(view!=='player')history.pushState({p:1},'');setView('player')}
 function closePlayer(){if(history.state&&history.state.p)history.back();else setView('list')}
 addEventListener('popstate',()=>setView('list'));
+// Botón "atrás" del teléfono: lo llama MainActivity. true = ya lo manejé
+window.__back=()=>{if(view==='player'){setView('list');return true}return false};
 function setTitle(t){
   const m=$('#mq'),h=$('#title');
   h.textContent=t;m.classList.remove('run');
@@ -379,6 +381,13 @@ function draw(){
 const NATIVE=!!(window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform());
 const ML=NATIVE?(Capacitor.registerPlugin?Capacitor.registerPlugin('MusicLibrary'):Capacitor.Plugins.MusicLibrary):null;
 if(NATIVE)document.querySelector('.bar h1').insertAdjacentHTML('beforeend',' <small style="font:12px system-ui;color:var(--acc)">Android</small>');
+if(NATIVE)document.querySelectorAll('#addBtn,#dirBtn').forEach(b=>b.remove());
+// Mantiene la música sonando con la pantalla apagada o la app minimizada
+let ka;
+if(NATIVE){
+  audio.addEventListener('play',()=>{clearTimeout(ka);ML.keepAlive({on:true}).catch(()=>{})});
+  audio.addEventListener('pause',()=>{clearTimeout(ka);ka=setTimeout(()=>{if(audio.paused)ML.keepAlive({on:false}).catch(()=>{})},4000)});
+}
 let nat=[],scanning=false,covering=false;
 async function scanPhone(){
   if(scanning)return;scanning=true;
