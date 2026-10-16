@@ -388,7 +388,7 @@ async function scanPhone(){
     if(!p.granted){$('#count').textContent='Permite el acceso a tu música para ver tus canciones';return}
     const r=await ML.scan();
     const old=new Map(nat.map(x=>[x.id,x]));
-    nat=r.songs.map(x=>{
+    nat=r.songs.filter(x=>!/^(AUD|PTT)-\d{8}-WA\d+/i.test(x.displayName||'')).map(x=>{
       const id='n'+x.id,nm=(x.displayName||x.title||'').replace(/\.[^.]+$/,'');
       return Object.assign(old.get(id)||{},{id,name:nm,title:(x.title&&x.title!==nm)?x.title:'',artist:(x.artist&&x.artist!=='<unknown>')?x.artist:'',size:x.size,uri:x.uri,native:true,tg:1});
     });
