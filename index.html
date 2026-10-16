@@ -249,7 +249,7 @@ function render(){
 async function play(id){
   const s=songs.find(x=>x.id===id);if(!s)return;
   if(url){URL.revokeObjectURL(url);url=null}
-  if(s.uri)audio.src=Capacitor.convertFileUrl(s.uri);else{url=URL.createObjectURL(s.blob);audio.src=url}
+  if(s.uri)audio.src=Capacitor.convertFileSrc(s.uri);else{url=URL.createObjectURL(s.blob);audio.src=url}
   cur=id;
   startViz();
   try{await audio.play()}catch(e){}
