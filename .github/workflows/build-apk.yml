@@ -101,6 +101,7 @@ jobs:
               static volatile boolean playing = false;
               static volatile long posMs = 0;
               static volatile long durMs = 0;
+              static volatile float speed = 1f;
 
               private PowerManager.WakeLock wl;
               private MediaSession session;
@@ -206,7 +207,7 @@ jobs:
                       | PlaybackState.ACTION_SKIP_TO_NEXT | PlaybackState.ACTION_SKIP_TO_PREVIOUS | PlaybackState.ACTION_SEEK_TO;
                   session.setPlaybackState(new PlaybackState.Builder()
                       .setActions(acts)
-                      .setState(playing ? PlaybackState.STATE_PLAYING : PlaybackState.STATE_PAUSED, posMs, playing ? 1f : 0f)
+                      .setState(playing ? PlaybackState.STATE_PLAYING : PlaybackState.STATE_PAUSED, posMs, playing ? speed : 0f)
                       .build());
                   if (playing) {
                       if (wl == null) {
@@ -316,6 +317,8 @@ jobs:
                   Double dur = call.getDouble("dur", 0.0);
                   KeepAliveService.posMs = (long) (pos * 1000);
                   KeepAliveService.durMs = (long) (dur * 1000);
+                  Double sp = call.getDouble("speed", 1.0);
+                  KeepAliveService.speed = sp == null ? 1f : sp.floatValue();
                   if (call.hasOption("cover")) {
                       Bitmap bmp = null;
                       String c = call.getString("cover", "");
