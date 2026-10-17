@@ -83,12 +83,27 @@ li .x:hover{color:var(--acc2)}
 .empty{text-align:center;color:var(--mute);padding:44px 20px;border:2px dashed var(--line);border-radius:var(--r)}
 .empty b{display:block;color:var(--text);font:600 18px Georgia,serif;margin-bottom:6px}
 .drop{outline:2px dashed var(--acc);outline-offset:-8px}
+.top span{flex:1}
+.top .tb{min-width:42px;height:42px;padding:0 12px;border-radius:21px;background:var(--bg);color:var(--mute);font-size:18px;display:grid;place-items:center;white-space:nowrap}
+.top .tb.on{color:var(--acc)}
+.chips{display:flex;gap:8px;margin-bottom:10px}
+.chip{padding:7px 14px;border-radius:999px;border:1px solid var(--line);color:var(--mute);font-size:13px}
+.chip.on{background:var(--acc);color:#1a1424;border-color:var(--acc);font-weight:700}
+li .fv{color:var(--mute);font-size:21px;width:38px;height:38px;border-radius:50%;flex:none}
+li .fv.on{color:var(--acc2)}
+.sheet{position:fixed;inset:0;background:#000a;display:none;align-items:flex-end;justify-content:center;z-index:20}
+.sheet.show{display:flex}
+.sheet .box{background:var(--panel);width:100%;max-width:480px;border-radius:22px 22px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom))}
+.sheet h3{font:600 18px Georgia,serif;margin-bottom:10px}
+.sheet button{display:block;width:100%;text-align:left;padding:13px 12px;border-radius:12px;font-size:15px;color:var(--text)}
+.sheet button:active{background:var(--line)}
+.sheet button.off{color:var(--acc2)}
 </style>
 </head>
 <body>
 <div class="app v-list" id="app">
   <section class="player" aria-label="Reproductor">
-    <div class="top"><button class="back" id="back" aria-label="Volver a la lista"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button><span>Reproduciendo</span></div>
+    <div class="top"><button class="back" id="back" aria-label="Volver a la lista"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button><span>Reproduciendo</span><button class="tb" id="pFav" aria-label="Favorita">♡</button><button class="tb" id="pSleep" aria-label="Temporizador de sueño">☾</button></div>
     <div class="disc" aria-hidden="true"><div class="lab" id="lab"></div></div>
     <canvas id="viz" aria-hidden="true"></canvas>
     <div class="info"><div class="mq" id="mq"><h2 id="title">Elige una canción</h2></div><p id="sub">Tu música, sin conexión</p></div>
@@ -107,6 +122,7 @@ li .x:hover{color:var(--acc2)}
     <input type="file" id="file" accept="audio/*,.mp3,.m4a,.wav,.ogg,.flac,.aac,.opus" multiple hidden>
     <input type="file" id="dir" webkitdirectory multiple hidden>
     <input class="search" id="q" type="search" placeholder="Buscar canción" aria-label="Buscar">
+    <div class="chips"><button class="chip on" id="fAll">Todas</button><button class="chip" id="fFav">♥ Favoritas</button></div>
     <div class="count" id="count"></div>
     <ul id="list"></ul>
   </section>
@@ -117,12 +133,22 @@ li .x:hover{color:var(--acc2)}
     <button class="ic" id="mNext" aria-label="Siguiente">⏭</button>
   </div>
 </div>
+<div class="sheet" id="sheet"><div class="box"><h3>Temporizador de sueño</h3>
+  <button data-m="15">15 minutos</button><button data-m="30">30 minutos</button><button data-m="45">45 minutos</button><button data-m="60">1 hora</button>
+  <button data-m="eot">Al terminar esta canción</button><button data-m="0" class="off" id="sOff">Desactivar</button></div></div>
 <audio id="a" preload="metadata"></audio>
 
 <script>
 const $=s=>document.querySelector(s);
 const audio=$('#a');
 let db,songs=[],cur=null,shuffle=false,repeat=0,url=null,drag=false;
+// Preferencias guardadas (favoritos y última canción)
+const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const favs=new Set(LS.get('vin_fav',[]).map(String));
+let onlyFav=false,restored=false,lastSave=0;
+const isFav=s=>favs.has(String(s.id));
+function toggleFav(s){const k=String(s.id);favs.has(k)?favs.delete(k):favs.add(k);LS.set('vin_fav',[...favs]);render();ui()}
+function saveLast(){if(cur!==null)LS.set('vin_last',{id:cur,pos:audio.currentTime||0})}
 
 // ---------- Almacenamiento (IndexedDB): la biblioteca se queda guardada ----------
 const open=()=>new Promise((ok,no)=>{const r=indexedDB.open('vinilo',1);r.onupgradeneeded=()=>r.result.createObjectStore('songs',{keyPath:'id',autoIncrement:true});r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)});
@@ -134,6 +160,16 @@ async function load(){
   songs=nat.concat(all.filter(x=>!k.has(x.name+'|'+x.size)));
   songs.sort((a,b)=>dsp(a).t.localeCompare(dsp(b).t));
   render();migrate();
+  if(!restored&&cur===null)tryRestore();
+}
+function tryRestore(){
+  const l=LS.get('vin_last',null);if(!l)return;
+  const s=songs.find(x=>String(x.id)===String(l.id));if(!s)return;
+  restored=true;
+  if(s.uri)audio.src=Capacitor.convertFileSrc(s.uri);else if(s.blob){url=URL.createObjectURL(s.blob);audio.src=url}else return;
+  cur=s.id;
+  audio.addEventListener('loadedmetadata',()=>{if(l.pos>0&&audio.duration&&l.pos<audio.duration-1)audio.currentTime=l.pos},{once:true});
+  meta(s);ui();render();
 }
 async function migrate(){
   let ch=false;
@@ -226,11 +262,12 @@ const mb=b=>(b/1048576).toFixed(1)+' MB';
 function render(){
   const q=$('#q').value.trim().toLowerCase();
   const list=$('#list');list.innerHTML='';
-  const shown=songs.filter(s=>{const d=dsp(s);return(d.t+' '+d.a).toLowerCase().includes(q)});
-  $('#count').textContent=songs.length?`${shown.length} de ${songs.length} canciones`:'';
+  const shown=songs.filter(s=>{const d=dsp(s);return(d.t+' '+d.a).toLowerCase().includes(q)&&(!onlyFav||isFav(s))});
+  $('#count').textContent=songs.length?(onlyFav?`${shown.length} ${shown.length===1?'favorita':'favoritas'}`:`${shown.length} de ${songs.length} canciones`):'';
   if(!songs.length){
     list.innerHTML=NATIVE?'':'<div class="empty"><b>Tu biblioteca está vacía</b>Toca «+ Añadir» o «Carpeta» y elige archivos de audio de tu teléfono.</div>';return;
   }
+  if(onlyFav&&!shown.length&&!q){list.innerHTML='<div class="empty"><b>Aún no tienes favoritas</b>Toca el ♡ en una canción para guardarla aquí.</div>';return}
   shown.forEach((s,i)=>{
     const li=document.createElement('li');if(s.id===cur)li.className='cur';
     const t=document.createElement('button');t.className='t';
@@ -242,7 +279,8 @@ function render(){
     const sz=document.createElement('div');sz.className='sz';sz.textContent=d.a||mb(s.size);
     w.append(nm,sz);t.append(n,w);t.onclick=()=>{if(s.id!==cur)play(s.id);openPlayer()};
     const x=document.createElement('button');x.className='x';x.textContent='✕';x.setAttribute('aria-label','Quitar '+d.t);x.onclick=()=>del(s.id);
-    s.native?li.append(t):li.append(t,x);list.append(li);
+    const f=document.createElement('button');f.className='fv'+(isFav(s)?' on':'');f.textContent=isFav(s)?'♥':'♡';f.setAttribute('aria-label','Favorita');f.onclick=()=>toggleFav(s);
+    s.native?li.append(t,f):li.append(t,f,x);list.append(li);
   });
 }
 
@@ -251,7 +289,7 @@ async function play(id){
   const s=songs.find(x=>x.id===id);if(!s)return;
   if(url){URL.revokeObjectURL(url);url=null}
   if(s.uri)audio.src=Capacitor.convertFileSrc(s.uri);else{url=URL.createObjectURL(s.blob);audio.src=url}
-  cur=id;
+  cur=id;LS.set('vin_last',{id,pos:0});
   startViz();
   try{await audio.play()}catch(e){}
   meta(s);
@@ -267,15 +305,18 @@ function step(d){
 }
 function toggle(){
   if(cur===null){if(songs.length)play(songs[0].id);return}
-  audio.paused?audio.play():audio.pause();
+  if(audio.paused){startViz();audio.play()}else audio.pause();
 }
 audio.onended=()=>{
+  if(sleepEOT){setSleep(0);ui();return}
   if(repeat===2){audio.currentTime=0;audio.play();return}
   if(repeat===0&&!shuffle&&idx()===songs.length-1){ui();return}
   step(1);
 };
-audio.onplay=audio.onpause=()=>{ui();render()};
+audio.onplay=audio.onpause=()=>{ui();render();saveLast()};
 audio.ontimeupdate=()=>{
+  const now=Date.now();if(now-lastSave>4000){lastSave=now;saveLast()}
+  if(sleepEnd){const rem=sleepEnd-now;if(rem<=0)sleepNow();else if(rem<10000)audio.volume=Math.max(0,rem/10000);updSleep()}
   if(drag||!audio.duration)return;
   const p=audio.currentTime/audio.duration*1000;
   $('#seek').value=p;paint($('#seek'));$('#cur').textContent=fmt(audio.currentTime);$('#mprog').style.width=p/10+'%';
@@ -296,7 +337,7 @@ function openPlayer(){if(view!=='player')history.pushState({p:1},'');setView('pl
 function closePlayer(){if(history.state&&history.state.p)history.back();else setView('list')}
 addEventListener('popstate',()=>setView('list'));
 // Botón "atrás" del teléfono: lo llama MainActivity. true = ya lo manejé
-window.__back=()=>{if(view==='player'){setView('list');return true}return false};
+window.__back=()=>{const sh=$('#sheet');if(sh.classList.contains('show')){sh.classList.remove('show');return true}if(view==='player'){setView('list');return true}return false};
 function setTitle(t){
   const m=$('#mq'),h=$('#title');
   h.textContent=t;m.classList.remove('run');
@@ -313,6 +354,7 @@ function ui(){
   $('#app').classList.toggle('playing',on);
   $('#play').innerHTML=on?PAUSE:PLAY;$('#mPlay').innerHTML=on?PAUSE:PLAY;$('#app').classList.toggle('has',cur!==null);
   $('#play').setAttribute('aria-label',on?'Pausar':'Reproducir');
+  const cs=songs.find(x=>x.id===cur),fv=!!(cs&&isFav(cs));$('#pFav').textContent=fv?'♥':'♡';$('#pFav').classList.toggle('on',fv);
   $('#shuf').classList.toggle('on',shuffle);
   $('#rep').classList.toggle('on',repeat>0);
   $('#rep').textContent=repeat===2?'↻¹':'↻';
@@ -332,6 +374,31 @@ $('#addBtn').onclick=()=>$('#file').click();
 $('#dirBtn').onclick=()=>$('#dir').click();
 $('#dir').onchange=e=>{add([...e.target.files]);e.target.value=''};
 $('#back').onclick=closePlayer;
+$('#pFav').onclick=()=>{const s=songs.find(x=>x.id===cur);if(s)toggleFav(s)};
+const chips=()=>{$('#fAll').classList.toggle('on',!onlyFav);$('#fFav').classList.toggle('on',onlyFav)};
+$('#fAll').onclick=()=>{onlyFav=false;chips();render()};
+$('#fFav').onclick=()=>{onlyFav=true;chips();render()};
+// Temporizador de sueño
+let sleepT=null,sleepEnd=0,sleepEOT=false;
+function updSleep(){
+  const b=$('#pSleep');
+  b.textContent=sleepEnd?'☾ '+Math.max(1,Math.ceil((sleepEnd-Date.now())/60000))+' min':sleepEOT?'☾ fin':'☾';
+  b.classList.toggle('on',!!(sleepEnd||sleepEOT));
+}
+function setSleep(m){
+  clearTimeout(sleepT);sleepT=null;sleepEnd=0;sleepEOT=false;audio.volume=1;
+  if(m==='eot')sleepEOT=true;
+  else if(m>0){sleepEnd=Date.now()+m*60000;sleepT=setTimeout(sleepNow,m*60000)}
+  updSleep();
+}
+function sleepNow(){audio.pause();setSleep(0)}
+$('#pSleep').onclick=()=>$('#sheet').classList.add('show');
+$('#sheet').onclick=e=>{
+  const b=e.target.closest('button');
+  if(b)setSleep(b.dataset.m==='eot'?'eot':+b.dataset.m);
+  if(b||e.target.id==='sheet')$('#sheet').classList.remove('show');
+};
+document.addEventListener('visibilitychange',()=>{if(document.hidden)saveLast()});
 $('#mOpen').onclick=openPlayer;
 $('#mPlay').onclick=toggle;
 $('#mNext').onclick=()=>step(1);
