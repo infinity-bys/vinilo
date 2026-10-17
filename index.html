@@ -84,13 +84,18 @@ li .x:hover{color:var(--acc2)}
 .empty b{display:block;color:var(--text);font:600 18px Georgia,serif;margin-bottom:6px}
 .drop{outline:2px dashed var(--acc);outline-offset:-8px}
 .top span{flex:1}
-.top .tb{min-width:42px;height:42px;padding:0 12px;border-radius:21px;background:var(--bg);color:var(--mute);font-size:18px;display:grid;place-items:center;white-space:nowrap}
-.top .tb.on{color:var(--acc)}
+.extra{width:100%;display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:18px}
+.pbtn{flex:none;display:flex;align-items:center;justify-content:center;gap:8px;height:52px;min-width:52px;padding:0 16px;border-radius:26px;background:var(--bg);border:1px solid var(--line);color:var(--mute);font:600 14px/1 system-ui,sans-serif;white-space:nowrap;transition:color .2s,border-color .2s,background .2s,transform .15s}
+.pbtn:active{transform:scale(.94)}
+.pbtn svg{flex:none}
+.pbtn #sLbl:empty{display:none}
+#pFav.on{color:var(--acc2);border-color:var(--acc2);background:#e8644f1f}
+#pFav.on svg{fill:currentColor}
+#pSleep.on{color:var(--acc);border-color:var(--acc);background:#f2a53a1f}
+#pSleep.on svg{fill:currentColor}
 .chips{display:flex;gap:8px;margin-bottom:10px}
 .chip{padding:7px 14px;border-radius:999px;border:1px solid var(--line);color:var(--mute);font-size:13px}
 .chip.on{background:var(--acc);color:#1a1424;border-color:var(--acc);font-weight:700}
-li .fv{color:var(--mute);font-size:21px;width:38px;height:38px;border-radius:50%;flex:none}
-li .fv.on{color:var(--acc2)}
 .sheet{position:fixed;inset:0;background:#000a;display:none;align-items:flex-end;justify-content:center;z-index:20}
 .sheet.show{display:flex}
 .sheet .box{background:var(--panel);width:100%;max-width:480px;border-radius:22px 22px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom))}
@@ -103,7 +108,7 @@ li .fv.on{color:var(--acc2)}
 <body>
 <div class="app v-list" id="app">
   <section class="player" aria-label="Reproductor">
-    <div class="top"><button class="back" id="back" aria-label="Volver a la lista"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button><span>Reproduciendo</span><button class="tb" id="pFav" aria-label="Favorita">♡</button><button class="tb" id="pSleep" aria-label="Temporizador de sueño">☾</button></div>
+    <div class="top"><button class="back" id="back" aria-label="Volver a la lista"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button><span>Reproduciendo</span></div>
     <div class="disc" aria-hidden="true"><div class="lab" id="lab"></div></div>
     <canvas id="viz" aria-hidden="true"></canvas>
     <div class="info"><div class="mq" id="mq"><h2 id="title">Elige una canción</h2></div><p id="sub">Tu música, sin conexión</p></div>
@@ -114,6 +119,10 @@ li .fv.on{color:var(--acc2)}
       <button id="play" class="main" aria-label="Reproducir">▶</button>
       <button id="next" aria-label="Siguiente">⏭</button>
       <button id="rep" aria-label="Repetir" title="Repetir">↻</button>
+    </div>
+    <div class="extra">
+      <button class="pbtn" id="pFav" aria-label="Favorita" aria-pressed="false"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+      <button class="pbtn" id="pSleep" aria-label="Temporizador de sueño"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><span id="sLbl"></span></button>
     </div>
   </section>
 
@@ -279,8 +288,7 @@ function render(){
     const sz=document.createElement('div');sz.className='sz';sz.textContent=d.a||mb(s.size);
     w.append(nm,sz);t.append(n,w);t.onclick=()=>{if(s.id!==cur)play(s.id);openPlayer()};
     const x=document.createElement('button');x.className='x';x.textContent='✕';x.setAttribute('aria-label','Quitar '+d.t);x.onclick=()=>del(s.id);
-    const f=document.createElement('button');f.className='fv'+(isFav(s)?' on':'');f.textContent=isFav(s)?'♥':'♡';f.setAttribute('aria-label','Favorita');f.onclick=()=>toggleFav(s);
-    s.native?li.append(t,f):li.append(t,f,x);list.append(li);
+    s.native?li.append(t):li.append(t,x);list.append(li);
   });
 }
 
@@ -354,7 +362,7 @@ function ui(){
   $('#app').classList.toggle('playing',on);
   $('#play').innerHTML=on?PAUSE:PLAY;$('#mPlay').innerHTML=on?PAUSE:PLAY;$('#app').classList.toggle('has',cur!==null);
   $('#play').setAttribute('aria-label',on?'Pausar':'Reproducir');
-  const cs=songs.find(x=>x.id===cur),fv=!!(cs&&isFav(cs));$('#pFav').textContent=fv?'♥':'♡';$('#pFav').classList.toggle('on',fv);
+  const cs=songs.find(x=>x.id===cur),fv=!!(cs&&isFav(cs));$('#pFav').classList.toggle('on',fv);$('#pFav').setAttribute('aria-pressed',fv);
   $('#shuf').classList.toggle('on',shuffle);
   $('#rep').classList.toggle('on',repeat>0);
   $('#rep').textContent=repeat===2?'↻¹':'↻';
@@ -382,7 +390,7 @@ $('#fFav').onclick=()=>{onlyFav=true;chips();render()};
 let sleepT=null,sleepEnd=0,sleepEOT=false;
 function updSleep(){
   const b=$('#pSleep');
-  b.textContent=sleepEnd?'☾ '+Math.max(1,Math.ceil((sleepEnd-Date.now())/60000))+' min':sleepEOT?'☾ fin':'☾';
+  $('#sLbl').textContent=sleepEnd?Math.max(1,Math.ceil((sleepEnd-Date.now())/60000))+' m':sleepEOT?'Fin':'';
   b.classList.toggle('on',!!(sleepEnd||sleepEOT));
 }
 function setSleep(m){
