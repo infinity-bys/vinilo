@@ -109,6 +109,28 @@ li .x:hover{color:var(--acc2)}
 .sw::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:var(--text);transition:transform .2s}
 .sw.on{background:var(--acc)}
 .sw.on::after{transform:translateX(18px)}
+.sheet .box{max-height:82vh;overflow-y:auto}
+#list li{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.rad{display:none;width:26px;height:26px;border-radius:50%;border:2px solid var(--mute);flex:none;place-items:center;font-size:15px;font-weight:700;color:#1a1424}
+body.selmode .rad{display:grid}
+body.selmode li .x{display:none}
+li.sel{border-color:var(--acc)}
+li.sel .rad{background:var(--acc);border-color:var(--acc)}
+li.sel .rad::after{content:"✓"}
+.selbar{display:none;position:fixed;top:0;left:0;right:0;height:64px;align-items:center;gap:10px;padding:0 12px;background:var(--bg);z-index:8;font-size:18px}
+.selbar button{width:44px;height:44px;display:grid;place-items:center;border-radius:50%}
+.selbar b{flex:1}
+.selbar #selAll{width:auto;padding:0 14px;color:var(--acc);font-weight:700;font-size:15px;border-radius:999px}
+.selact{display:none;position:fixed;left:0;right:0;bottom:0;justify-content:space-around;background:var(--panel);border-top:1px solid var(--line);border-radius:22px 22px 0 0;padding:10px 6px calc(10px + env(safe-area-inset-bottom));z-index:8}
+.selact button{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:6px 4px;color:var(--text);font-size:12px;text-align:center}
+.selact button svg{color:var(--acc)}
+body.selmode .selbar,body.selmode .selact{display:flex}
+body.selmode .mini{display:none!important}
+body.selmode .lib{padding-bottom:120px}
+.newpl{width:100%;padding:13px;border-radius:14px;border:1px dashed var(--acc);color:var(--acc);font-weight:700;margin-bottom:4px}
+.plh{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.plh b{flex:1;min-width:0;font:600 18px Georgia,serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#plName{width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--text);font-size:16px;margin-bottom:10px}
 .gear{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;color:var(--mute);flex:none}
 .gear.on{color:var(--acc)}
 .toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--panel);border:1px solid var(--line);color:var(--text);padding:10px 18px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:30;white-space:nowrap}
@@ -169,7 +191,7 @@ li .x:hover{color:var(--acc2)}
     <input type="file" id="file" accept="audio/*,.mp3,.m4a,.wav,.ogg,.flac,.aac,.opus" multiple hidden>
     <input type="file" id="dir" webkitdirectory multiple hidden>
     <input class="search" id="q" type="search" placeholder="Buscar canción" aria-label="Buscar">
-    <div class="chips"><button class="chip on" id="fAll">Todas</button><button class="chip" id="fFav">♥ Favoritas</button></div>
+    <div class="chips"><button class="chip on" id="fAll">Todas</button><button class="chip" id="fFav">♥ Favoritas</button><button class="chip" id="fPl">Listas</button></div>
     <div class="count" id="count"></div>
     <ul id="list"></ul>
   </section>
@@ -180,9 +202,20 @@ li .x:hover{color:var(--acc2)}
     <button class="ic" id="mNext" aria-label="Siguiente"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="5 4 15 12 5 20 5 4" fill="currentColor"/><line x1="19" y1="5" x2="19" y2="19"/></svg></button>
   </div>
 </div>
+<div class="selbar" id="selBar"><button id="selBack" aria-label="Salir de la selección"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><b id="selCount">0 seleccionados</b><button id="selAll">Todas</button></div>
+<div class="selact" id="selAct">
+  <button id="aAdd"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 12H3"/><path d="M16 6H3"/><path d="M16 18H3"/><path d="M18 9v6"/><path d="M21 12h-6"/></svg><span>Agregar a</span></button>
+  <button id="aNext"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 12H3"/><path d="M16 18H3"/><path d="M10 6H3"/><path d="M21 18V8a2 2 0 0 0-2-2h-5"/><path d="m16 8-2-2 2-2"/></svg><span>A continuación</span></button>
+  <button id="aHide"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg><span>Ocultar</span></button>
+  <button id="aRem" style="display:none"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 12H3"/><path d="M16 6H3"/><path d="M16 18H3"/><path d="M21 12h-6"/></svg><span>Quitar</span></button>
+</div>
+<div class="sheet" id="addTo"><div class="box"><h3>Agregar a la lista</h3><div id="addList"></div></div></div>
+<div class="sheet" id="nameSheet"><div class="box"><h3 id="nameTitle">Nueva lista</h3><input id="plName" maxlength="40" placeholder="Nombre de la lista" autocomplete="off"><button class="row" id="nameOk"><span class="rl">Guardar</span><svg class="ck" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></button></div></div>
+<div class="sheet" id="hidSheet"><div class="box"><h3>Canciones ocultas</h3><div id="hidList"></div></div></div>
 <div class="sheet" id="set"><div class="box"><h3>Ajustes</h3>
   <button class="row" id="sSleep"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><span class="rl">Temporizador para dormir</span><span class="rv" id="sleepVal">Desactivado</span><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--mute)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
   <button class="row" id="sAcc" role="switch" aria-checked="false"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13.5" cy="6.5" r=".6" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".6" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".6" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".6" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg><span class="rl">Botones con colores de la carátula</span><span class="sw" id="accSw"></span></button>
+  <button class="row" id="sHid"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg><span class="rl">Canciones ocultas</span><span class="rv" id="hidVal">Ninguna</span><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--mute)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
 </div></div>
 <div class="sheet" id="eq"><div class="box"><h3>Ecualizador</h3><div class="pres" id="pres"></div><div id="eqRows"></div></div></div>
 <div class="toast" id="toast"></div>
@@ -191,7 +224,10 @@ li .x:hover{color:var(--acc2)}
   <button data-m="eot">Al terminar esta canción</button><button data-m="0" class="off" id="sOff">Desactivar</button></div></div>
 <div class="sheet" id="menu"><div class="box">
   <div class="mh"><span class="mthumb" id="mThumb"></span><div class="mht"><b id="mhT">Vinilo</b><small id="mhA"></small></div></div>
+  <button class="row" id="mAdd"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 12H3"/><path d="M16 6H3"/><path d="M16 18H3"/><path d="M18 9v6"/><path d="M21 12h-6"/></svg><span class="rl">Agregar a la lista de reproducción</span></button>
+  <button class="row" id="mNext2"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 12H3"/><path d="M16 18H3"/><path d="M10 6H3"/><path d="M21 18V8a2 2 0 0 0-2-2h-5"/><path d="m16 8-2-2 2-2"/></svg><span class="rl">Reproducir a continuación</span></button>
   <button class="row" id="mSpeed"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg><span class="rl">Velocidad de reproducción</span><span class="rv" id="spdVal">Normal</span><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--mute)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+  <button class="row" id="mHide"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg><span class="rl">Ocultar</span></button>
 </div></div>
 <div class="sheet" id="spd"><div class="box"><h3>Velocidad de reproducción</h3><div id="spdList"></div></div></div>
 <audio id="a" preload="metadata"></audio>
@@ -205,6 +241,13 @@ const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.par
 const favs=new Set(LS.get('vin_fav',[]).map(String));
 let onlyFav=false,restored=false,lastSave=0;
 let accOn=LS.get('vin_acc',false)===true;
+const keyOf=s=>String(s.id);
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const hid=new Set(LS.get('vin_hid',[]).map(String));
+let pls=LS.get('vin_pl',[]);if(!Array.isArray(pls))pls=[];
+let allSongs=[],queue=[],sel=null,showPl=false,plSel=null,ctx=null,lpUntil=0,pendIds=[],nameCb=null;
+const savePl=()=>LS.set('vin_pl',pls);
+const saveHid=()=>LS.set('vin_hid',[...hid]);
 const isFav=s=>favs.has(String(s.id));
 function toggleFav(s){const k=String(s.id);favs.has(k)?favs.delete(k):favs.add(k);LS.set('vin_fav',[...favs]);render();ui()}
 function saveLast(){if(cur!==null)LS.set('vin_last',{id:cur,pos:audio.currentTime||0})}
@@ -216,9 +259,10 @@ const wrap=r=>new Promise((ok,no)=>{r.onsuccess=()=>ok(r.result);r.onerror=()=>n
 async function load(){
   const all=await wrap(store('readonly').getAll());
   const k=new Set(nat.map(x=>x.name+'|'+x.size));
-  songs=nat.concat(all.filter(x=>!k.has(x.name+'|'+x.size)));
-  songs.sort((a,b)=>dsp(a).t.localeCompare(dsp(b).t));
-  render();migrate();
+  allSongs=nat.concat(all.filter(x=>!k.has(x.name+'|'+x.size)));
+  allSongs.sort((a,b)=>dsp(a).t.localeCompare(dsp(b).t));
+  songs=allSongs.filter(s=>!hid.has(keyOf(s)));
+  render();migrate();buildHid();
   if(!restored&&cur===null)tryRestore();
 }
 function tryRestore(){
@@ -361,17 +405,55 @@ function meta(s){
 }
 // ---------- Lista ----------
 const mb=b=>(b/1048576).toFixed(1)+' MB';
+function emptyMsg(t,s){return `<div class="empty"><b>${t}</b>${s}</div>`}
+function renderPlaylists(list){
+  $('#count').textContent=pls.length?`${pls.length} ${pls.length===1?'lista':'listas'}`:'';
+  const nb=document.createElement('button');nb.className='newpl';nb.textContent='＋ Nueva lista';
+  nb.onclick=()=>askName('Nueva lista','',n=>{pls.push({id:'p'+Date.now(),name:n,ids:[]});savePl();render()});
+  list.append(nb);
+  if(!pls.length){list.insertAdjacentHTML('beforeend',emptyMsg('Aún no tienes listas','Crea una con «＋ Nueva lista», o mantén presionada una canción y toca «Agregar a».'));return}
+  const have=new Set(songs.map(keyOf));
+  pls.forEach(p=>{
+    const li=document.createElement('li');
+    const t=document.createElement('button');t.className='t';
+    const n=document.createElement('span');n.className='n';n.textContent='♪';
+    const w=document.createElement('span');w.style.minWidth=0;
+    const nm=document.createElement('div');nm.className='nm';nm.textContent=p.name;
+    const c=p.ids.filter(i=>have.has(String(i))).length;
+    const sz=document.createElement('div');sz.className='sz';sz.textContent=`${c} ${c===1?'canción':'canciones'}`;
+    w.append(nm,sz);t.append(n,w);t.onclick=()=>{plSel=p.id;render()};
+    li.append(t);list.append(li);
+  });
+}
 function render(){
   const q=$('#q').value.trim().toLowerCase();
   const list=$('#list');list.innerHTML='';
-  const shown=songs.filter(s=>{const d=dsp(s);return(d.t+' '+d.a).toLowerCase().includes(q)&&(!onlyFav||isFav(s))});
-  $('#count').textContent=songs.length?(onlyFav?`${shown.length} ${shown.length===1?'favorita':'favoritas'}`:`${shown.length} de ${songs.length} canciones`):'';
-  if(!songs.length){
+  document.body.classList.toggle('selmode',!!sel);
+  if(showPl&&!plSel){renderPlaylists(list);return}
+  let p=plSel?pls.find(x=>x.id===plSel):null;
+  if(plSel&&!p){plSel=null;renderPlaylists(list);return}
+  let base=songs;
+  if(p){const m=new Map(songs.map(s=>[keyOf(s),s]));base=p.ids.map(i=>m.get(String(i))).filter(Boolean)}
+  const shown=base.filter(s=>{const d=dsp(s);return(d.t+' '+d.a).toLowerCase().includes(q)&&(!onlyFav||isFav(s))});
+  $('#count').textContent=p?`${shown.length} ${shown.length===1?'canción':'canciones'}`:songs.length?(onlyFav?`${shown.length} ${shown.length===1?'favorita':'favoritas'}`:`${shown.length} de ${songs.length} canciones`):'';
+  if(p){
+    const hd=document.createElement('div');hd.className='plh';
+    hd.innerHTML=`<button class="gear" id="plBack" aria-label="Volver a las listas"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><b>${esc(p.name)}</b><button class="chip" id="plRen">Renombrar</button><button class="chip" id="plDel">Eliminar</button>`;
+    list.append(hd);
+    hd.querySelector('#plBack').onclick=()=>{plSel=null;exitSel();render()};
+    hd.querySelector('#plRen').onclick=()=>askName('Renombrar lista',p.name,n=>{p.name=n;savePl();render()});
+    hd.querySelector('#plDel').onclick=()=>{if(confirm('¿Eliminar la lista «'+p.name+'»? Las canciones no se borran.')){pls=pls.filter(x=>x.id!==p.id);savePl();plSel=null;exitSel();render()}};
+    if(!shown.length&&!q){list.insertAdjacentHTML('beforeend',emptyMsg('Esta lista está vacía','Mantén presionada una canción y toca «Agregar a».'));return}
+  }
+  if(!songs.length&&!p){
     list.innerHTML=NATIVE?'':'<div class="empty"><b>Tu biblioteca está vacía</b>Toca «+ Añadir» o «Carpeta» y elige archivos de audio de tu teléfono.</div>';return;
   }
-  if(onlyFav&&!shown.length&&!q){list.innerHTML='<div class="empty"><b>Aún no tienes favoritas</b>Toca el ♡ en una canción para guardarla aquí.</div>';return}
+  if(onlyFav&&!shown.length&&!q&&!p){list.innerHTML='<div class="empty"><b>Aún no tienes favoritas</b>Abre una canción y toca el ♡ para guardarla aquí.</div>';return}
   shown.forEach((s,i)=>{
-    const li=document.createElement('li');if(s.id===cur)li.className='cur';
+    const li=document.createElement('li');li.dataset.k=keyOf(s);
+    if(s.id===cur)li.classList.add('cur');
+    if(sel&&sel.has(keyOf(s)))li.classList.add('sel');
+    const rad=document.createElement('span');rad.className='rad';
     const t=document.createElement('button');t.className='t';
     const d=dsp(s),u=coverUrl(s);
     const n=document.createElement('span');n.className='n';
@@ -379,9 +461,21 @@ function render(){
     const w=document.createElement('span');w.style.minWidth=0;
     const nm=document.createElement('div');nm.className='nm';nm.textContent=d.t;
     const sz=document.createElement('div');sz.className='sz';sz.textContent=d.a||mb(s.size);
-    w.append(nm,sz);t.append(n,w);t.onclick=()=>{if(s.id!==cur)play(s.id);openPlayer()};
+    w.append(nm,sz);t.append(n,w);
+    // mantener presionado = modo selección
+    let lt=null,p0=null;
+    t.addEventListener('pointerdown',e=>{if(sel)return;p0=[e.clientX,e.clientY];lt=setTimeout(()=>{lt=null;startSel(s)},480)});
+    t.addEventListener('pointermove',e=>{if(lt&&p0&&(Math.abs(e.clientX-p0[0])>10||Math.abs(e.clientY-p0[1])>10)){clearTimeout(lt);lt=null}});
+    ['pointerup','pointercancel','pointerleave'].forEach(ev=>t.addEventListener(ev,()=>{clearTimeout(lt);lt=null}));
+    t.addEventListener('contextmenu',e=>e.preventDefault());
+    t.onclick=()=>{
+      if(Date.now()<lpUntil)return;
+      if(sel){toggleSel(s);return}
+      ctx=(p||onlyFav)?shown.map(keyOf):null;
+      if(s.id!==cur)play(s.id);openPlayer();
+    };
     const x=document.createElement('button');x.className='x';x.textContent='✕';x.setAttribute('aria-label','Quitar '+d.t);x.onclick=()=>del(s.id);
-    s.native?li.append(t):li.append(t,x);list.append(li);
+    li.append(rad,t);if(!s.native)li.append(x);list.append(li);
   });
 }
 
@@ -398,11 +492,17 @@ async function play(id){
 }
 function idx(){return songs.findIndex(s=>s.id===cur)}
 function step(d){
-  if(!songs.length)return;
-  let i=idx();
-  if(shuffle&&songs.length>1){let r;do{r=Math.floor(Math.random()*songs.length)}while(r===i);i=r}
-  else i=(i+d+songs.length)%songs.length;
-  play(songs[i].id);
+  if(d>0&&queue.length){
+    let q=null;
+    while(queue.length&&!q){const id=queue.shift();q=songs.find(x=>String(x.id)===String(id))}
+    if(q){play(q.id);return}
+  }
+  const arr=ctx?ctx.map(k=>songs.find(x=>keyOf(x)===k)).filter(Boolean):songs;
+  if(!arr.length)return;
+  let i=arr.findIndex(s=>s.id===cur);
+  if(shuffle&&arr.length>1){let r;do{r=Math.floor(Math.random()*arr.length)}while(r===i);i=r}
+  else i=(i+d+arr.length)%arr.length;
+  play(arr[i].id);
 }
 function toggle(){
   if(cur===null){if(songs.length)play(songs[0].id);return}
@@ -438,7 +538,7 @@ function openPlayer(){if(view!=='player')history.pushState({p:1},'');setView('pl
 function closePlayer(){if(history.state&&history.state.p)history.back();else setView('list')}
 addEventListener('popstate',()=>setView('list'));
 // Botón "atrás" del teléfono: lo llama MainActivity. true = ya lo manejé
-window.__back=()=>{const sh=document.querySelector('.sheet.show');if(sh){sh.classList.remove('show');return true}if(view==='player'){setView('list');return true}return false};
+window.__back=()=>{const sh=document.querySelector('.sheet.show');if(sh){sh.classList.remove('show');return true}if(sel){exitSel();return true}if(view==='player'){setView('list');return true}if(plSel){plSel=null;render();return true}if(showPl){showPl=false;chips();render();return true}return false};
 function setTitle(t){
   const m=$('#mq'),h=$('#title');
   h.textContent=t;m.classList.remove('run');
@@ -471,9 +571,93 @@ $('#dirBtn').onclick=()=>$('#dir').click();
 $('#dir').onchange=e=>{add([...e.target.files]);e.target.value=''};
 $('#back').onclick=closePlayer;
 $('#pFav').onclick=()=>{const s=songs.find(x=>x.id===cur);if(s)toggleFav(s)};
-const chips=()=>{$('#fAll').classList.toggle('on',!onlyFav);$('#fFav').classList.toggle('on',onlyFav)};
-$('#fAll').onclick=()=>{onlyFav=false;chips();render()};
-$('#fFav').onclick=()=>{onlyFav=true;chips();render()};
+const chips=()=>{$('#fAll').classList.toggle('on',!onlyFav&&!showPl);$('#fFav').classList.toggle('on',onlyFav);$('#fPl').classList.toggle('on',showPl)};
+$('#fAll').onclick=()=>{onlyFav=false;showPl=false;plSel=null;exitSel();chips();render()};
+$('#fFav').onclick=()=>{onlyFav=true;showPl=false;plSel=null;exitSel();chips();render()};
+$('#fPl').onclick=()=>{onlyFav=false;showPl=true;plSel=null;exitSel();chips();render()};
+// ----- Selección (mantener presionada una canción) -----
+function selIds(){return songs.filter(s=>sel&&sel.has(keyOf(s))).map(s=>s.id)}
+function paintSel(){
+  const n=sel?sel.size:0;
+  $('#selCount').textContent=n+' '+(n===1?'seleccionado':'seleccionados');
+  $('#list').querySelectorAll('li[data-k]').forEach(li=>li.classList.toggle('sel',!!(sel&&sel.has(li.dataset.k))));
+}
+function startSel(s){sel=new Set([keyOf(s)]);lpUntil=Date.now()+700;document.body.classList.add('selmode');$('#aRem').style.display=plSel?'':'none';paintSel()}
+function toggleSel(s){const k=keyOf(s);sel.has(k)?sel.delete(k):sel.add(k);if(!sel.size){exitSel();return}paintSel()}
+function exitSel(){sel=null;document.body.classList.remove('selmode');paintSel()}
+$('#selBack').onclick=exitSel;
+$('#selAll').onclick=()=>{if(!sel)return;$('#list').querySelectorAll('li[data-k]').forEach(li=>sel.add(li.dataset.k));paintSel()};
+// ----- Reproducir a continuación -----
+function playNext(ids){
+  if(!ids.length)return;
+  if(cur===null){play(ids[0]);queue.unshift(...ids.slice(1));showToast('Reproduciendo');return}
+  queue.unshift(...ids);
+  showToast(ids.length===1?'Suena a continuación':ids.length+' canciones a continuación');
+}
+// ----- Ocultar -----
+function buildHid(){
+  const hs=allSongs.filter(s=>hid.has(keyOf(s)));
+  $('#hidVal').textContent=hs.length?String(hs.length):'Ninguna';
+  $('#hidList').innerHTML=hs.length?'<button class="row" data-a="all"><span class="rl">Mostrar todas</span></button>'+hs.map(s=>`<button class="row" data-id="${esc(keyOf(s))}"><span class="rl">${esc(dsp(s).t)}</span><span class="rv">Mostrar</span></button>`).join(''):emptyMsg('No hay canciones ocultas','Las que ocultes aparecerán aquí.');
+}
+function hideSongs(ids){
+  if(!ids.length)return;
+  const ks=ids.map(String);ks.forEach(k=>hid.add(k));saveHid();
+  queue=queue.filter(q=>!ks.includes(String(q)));
+  if(cur!==null&&ks.includes(String(cur))){
+    audio.pause();audio.removeAttribute('src');audio.load();cur=null;
+    if(view==='player')setView('list');
+    if(NATIVE)ML.keepAlive({on:false}).catch(()=>{});
+  }
+  songs=allSongs.filter(s=>!hid.has(keyOf(s)));
+  ui();render();buildHid();
+  showToast(ids.length===1?'Canción oculta':ids.length+' canciones ocultas');
+}
+$('#sHid').onclick=()=>{$('#set').classList.remove('show');buildHid();$('#hidSheet').classList.add('show')};
+$('#hidSheet').onclick=e=>{
+  const b=e.target.closest('button');
+  if(!b){if(e.target.id==='hidSheet')$('#hidSheet').classList.remove('show');return}
+  if(b.dataset.a==='all')hid.clear();else hid.delete(b.dataset.id);
+  saveHid();songs=allSongs.filter(s=>!hid.has(keyOf(s)));render();buildHid();
+};
+// ----- Listas de reproducción -----
+function askName(title,init,cb){
+  nameCb=cb;$('#nameTitle').textContent=title;const i=$('#plName');i.value=init;
+  $('#nameSheet').classList.add('show');setTimeout(()=>{i.focus();i.select()},150);
+}
+function doName(){const v=$('#plName').value.trim();if(!v)return;$('#nameSheet').classList.remove('show');const f=nameCb;nameCb=null;if(f)f(v)}
+$('#nameOk').onclick=doName;
+$('#plName').onkeydown=e=>{if(e.key==='Enter')doName()};
+$('#nameSheet').onclick=e=>{if(e.target.id==='nameSheet')$('#nameSheet').classList.remove('show')};
+function buildAddList(){
+  $('#addList').innerHTML='<button class="row" data-p="new"><span class="rl">＋ Nueva lista</span></button>'+pls.map(p=>`<button class="row" data-p="${esc(p.id)}"><span class="rl">${esc(p.name)}</span><span class="rv">${p.ids.length}</span></button>`).join('');
+}
+function openAddTo(ids){if(!ids.length)return;pendIds=ids;buildAddList();$('#addTo').classList.add('show')}
+function addToPl(p,ids){
+  const have=new Set(p.ids.map(String));let n=0;
+  ids.forEach(i=>{if(!have.has(String(i))){p.ids.push(i);have.add(String(i));n++}});
+  savePl();showToast(n?'Agregada a «'+p.name+'»':'Ya estaba en «'+p.name+'»');
+}
+$('#addTo').onclick=e=>{
+  const b=e.target.closest('button');
+  if(!b){if(e.target.id==='addTo')$('#addTo').classList.remove('show');return}
+  $('#addTo').classList.remove('show');
+  const ids=pendIds;
+  if(b.dataset.p==='new')askName('Nueva lista','',n=>{const p={id:'p'+Date.now(),name:n,ids:[]};pls.push(p);addToPl(p,ids);exitSel();render()});
+  else{const p=pls.find(x=>x.id===b.dataset.p);if(p){addToPl(p,ids);exitSel();render()}}
+};
+$('#aAdd').onclick=()=>openAddTo(selIds());
+$('#aNext').onclick=()=>{playNext(selIds());exitSel()};
+$('#aHide').onclick=()=>{const ids=selIds();exitSel();hideSongs(ids)};
+$('#aRem').onclick=()=>{
+  const p=pls.find(x=>x.id===plSel);if(!p)return;
+  const ks=new Set(selIds().map(String));p.ids=p.ids.filter(i=>!ks.has(String(i)));
+  savePl();exitSel();render();showToast('Quitada de la lista');
+};
+// opciones del menú ⋮ (canción actual)
+$('#mAdd').onclick=()=>{$('#menu').classList.remove('show');if(cur!==null)openAddTo([cur])};
+$('#mNext2').onclick=()=>{$('#menu').classList.remove('show');if(cur!==null)playNext([cur])};
+$('#mHide').onclick=()=>{$('#menu').classList.remove('show');if(cur!==null)hideSongs([cur])};
 // Aviso corto en pantalla
 let toastT;
 function showToast(t){const e=$('#toast');e.textContent=t;e.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>e.classList.remove('show'),1400)}
