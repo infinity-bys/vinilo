@@ -131,6 +131,16 @@ body.selmode .lib{padding-bottom:120px}
 .plh{display:flex;align-items:center;gap:8px;margin-bottom:4px}
 .plh b{flex:1;min-width:0;font:600 18px Georgia,serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #plName{width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--text);font-size:16px;margin-bottom:10px}
+.sheet .plr{display:flex;align-items:center;gap:14px;padding:10px 8px;border-radius:16px}
+.plt{width:52px;height:52px;border-radius:14px;flex:none;display:grid;place-items:center;background:linear-gradient(135deg,var(--acc),var(--acc2));color:#1a1424}
+.plm{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;text-align:left}
+.plm b{font-size:16px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.plm small{color:var(--mute);font-size:13px}
+.plr.new .plt{background:none;border:2px dashed var(--acc);color:var(--acc)}
+.plr .plp{color:var(--acc);flex:none;display:grid}
+.sh{display:flex;align-items:center;gap:6px;margin-bottom:10px}
+.sh h3{margin:0}
+.sheet .sback{display:grid;place-items:center;width:40px;height:40px;padding:0;border-radius:50%;margin-left:-8px;flex:none}
 .gear{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;color:var(--mute);flex:none}
 .gear.on{color:var(--acc)}
 .toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--panel);border:1px solid var(--line);color:var(--text);padding:10px 18px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:30;white-space:nowrap}
@@ -152,6 +162,8 @@ body.selmode .lib{padding-bottom:120px}
 .row.sel .rl{color:var(--acc);font-weight:700}
 .row .ck{opacity:0;color:var(--acc)}
 .row.sel .ck{opacity:1}
+.chip{display:inline-flex;align-items:center;gap:6px}
+#fFav.on svg{fill:currentColor}
 .chips{display:flex;gap:8px;margin-bottom:10px}
 .chip{padding:7px 14px;border-radius:999px;border:1px solid var(--line);color:var(--mute);font-size:13px}
 .chip.on{background:var(--acc);color:#1a1424;border-color:var(--acc);font-weight:700}
@@ -191,7 +203,7 @@ body.selmode .lib{padding-bottom:120px}
     <input type="file" id="file" accept="audio/*,.mp3,.m4a,.wav,.ogg,.flac,.aac,.opus" multiple hidden>
     <input type="file" id="dir" webkitdirectory multiple hidden>
     <input class="search" id="q" type="search" placeholder="Buscar canción" aria-label="Buscar">
-    <div class="chips"><button class="chip on" id="fAll">Todas</button><button class="chip" id="fFav">♥ Favoritas</button><button class="chip" id="fPl">Listas</button></div>
+    <div class="chips"><button class="chip on" id="fAll">Todas</button><button class="chip" id="fFav"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Favoritas</button><button class="chip" id="fPl">Listas</button></div>
     <div class="count" id="count"></div>
     <ul id="list"></ul>
   </section>
@@ -205,13 +217,12 @@ body.selmode .lib{padding-bottom:120px}
 <div class="selbar" id="selBar"><button id="selBack" aria-label="Salir de la selección"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><b id="selCount">0 seleccionados</b><button id="selAll">Todas</button></div>
 <div class="selact" id="selAct">
   <button id="aAdd"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 12H3"/><path d="M16 6H3"/><path d="M16 18H3"/><path d="M18 9v6"/><path d="M21 12h-6"/></svg><span>Agregar a</span></button>
-  <button id="aNext"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 12H3"/><path d="M16 18H3"/><path d="M10 6H3"/><path d="M21 18V8a2 2 0 0 0-2-2h-5"/><path d="m16 8-2-2 2-2"/></svg><span>A continuación</span></button>
   <button id="aHide"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg><span>Ocultar</span></button>
   <button id="aRem" style="display:none"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 12H3"/><path d="M16 6H3"/><path d="M16 18H3"/><path d="M21 12h-6"/></svg><span>Quitar</span></button>
 </div>
 <div class="sheet" id="addTo"><div class="box"><h3>Agregar a la lista</h3><div id="addList"></div></div></div>
 <div class="sheet" id="nameSheet"><div class="box"><h3 id="nameTitle">Nueva lista</h3><input id="plName" maxlength="40" placeholder="Nombre de la lista" autocomplete="off"><button class="row" id="nameOk"><span class="rl">Guardar</span><svg class="ck" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></button></div></div>
-<div class="sheet" id="hidSheet"><div class="box"><h3>Canciones ocultas</h3><div id="hidList"></div></div></div>
+<div class="sheet" id="hidSheet" data-parent="set"><div class="box"><div class="sh"><button class="sback" aria-label="Atrás"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><h3>Canciones ocultas</h3></div><div id="hidList"></div></div></div>
 <div class="sheet" id="set"><div class="box"><h3>Ajustes</h3>
   <button class="row" id="sSleep"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><span class="rl">Temporizador para dormir</span><span class="rv" id="sleepVal">Desactivado</span><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--mute)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
   <button class="row" id="sAcc" role="switch" aria-checked="false"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13.5" cy="6.5" r=".6" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".6" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".6" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".6" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg><span class="rl">Botones con colores de la carátula</span><span class="sw" id="accSw"></span></button>
@@ -219,17 +230,16 @@ body.selmode .lib{padding-bottom:120px}
 </div></div>
 <div class="sheet" id="eq"><div class="box"><h3>Ecualizador</h3><div class="pres" id="pres"></div><div id="eqRows"></div></div></div>
 <div class="toast" id="toast"></div>
-<div class="sheet" id="sheet"><div class="box"><h3>Temporizador de sueño</h3>
+<div class="sheet" id="sheet" data-parent="set"><div class="box"><div class="sh"><button class="sback" aria-label="Atrás"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><h3>Temporizador de sueño</h3></div>
   <button data-m="15">15 minutos</button><button data-m="30">30 minutos</button><button data-m="45">45 minutos</button><button data-m="60">1 hora</button>
   <button data-m="eot">Al terminar esta canción</button><button data-m="0" class="off" id="sOff">Desactivar</button></div></div>
 <div class="sheet" id="menu"><div class="box">
   <div class="mh"><span class="mthumb" id="mThumb"></span><div class="mht"><b id="mhT">Vinilo</b><small id="mhA"></small></div></div>
   <button class="row" id="mAdd"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 12H3"/><path d="M16 6H3"/><path d="M16 18H3"/><path d="M18 9v6"/><path d="M21 12h-6"/></svg><span class="rl">Agregar a la lista de reproducción</span></button>
-  <button class="row" id="mNext2"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 12H3"/><path d="M16 18H3"/><path d="M10 6H3"/><path d="M21 18V8a2 2 0 0 0-2-2h-5"/><path d="m16 8-2-2 2-2"/></svg><span class="rl">Reproducir a continuación</span></button>
   <button class="row" id="mSpeed"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg><span class="rl">Velocidad de reproducción</span><span class="rv" id="spdVal">Normal</span><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--mute)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
   <button class="row" id="mHide"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg><span class="rl">Ocultar</span></button>
 </div></div>
-<div class="sheet" id="spd"><div class="box"><h3>Velocidad de reproducción</h3><div id="spdList"></div></div></div>
+<div class="sheet" id="spd" data-parent="menu"><div class="box"><div class="sh"><button class="sback" aria-label="Atrás"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><h3>Velocidad de reproducción</h3></div><div id="spdList"></div></div></div>
 <audio id="a" preload="metadata"></audio>
 
 <script>
@@ -245,7 +255,7 @@ const keyOf=s=>String(s.id);
 const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const hid=new Set(LS.get('vin_hid',[]).map(String));
 let pls=LS.get('vin_pl',[]);if(!Array.isArray(pls))pls=[];
-let allSongs=[],queue=[],sel=null,showPl=false,plSel=null,ctx=null,lpUntil=0,pendIds=[],nameCb=null;
+let allSongs=[],sel=null,showPl=false,plSel=null,ctx=null,lpUntil=0,pendIds=[],nameCb=null;
 const savePl=()=>LS.set('vin_pl',pls);
 const saveHid=()=>LS.set('vin_hid',[...hid]);
 const isFav=s=>favs.has(String(s.id));
@@ -416,7 +426,7 @@ function renderPlaylists(list){
   pls.forEach(p=>{
     const li=document.createElement('li');
     const t=document.createElement('button');t.className='t';
-    const n=document.createElement('span');n.className='n';n.textContent='♪';
+    const n=document.createElement('span');n.className='n';const ts=plThumb(p);if(ts)n.style.cssText=ts;else n.textContent='♪';
     const w=document.createElement('span');w.style.minWidth=0;
     const nm=document.createElement('div');nm.className='nm';nm.textContent=p.name;
     const c=p.ids.filter(i=>have.has(String(i))).length;
@@ -492,11 +502,6 @@ async function play(id){
 }
 function idx(){return songs.findIndex(s=>s.id===cur)}
 function step(d){
-  if(d>0&&queue.length){
-    let q=null;
-    while(queue.length&&!q){const id=queue.shift();q=songs.find(x=>String(x.id)===String(id))}
-    if(q){play(q.id);return}
-  }
   const arr=ctx?ctx.map(k=>songs.find(x=>keyOf(x)===k)).filter(Boolean):songs;
   if(!arr.length)return;
   let i=arr.findIndex(s=>s.id===cur);
@@ -538,7 +543,7 @@ function openPlayer(){if(view!=='player')history.pushState({p:1},'');setView('pl
 function closePlayer(){if(history.state&&history.state.p)history.back();else setView('list')}
 addEventListener('popstate',()=>setView('list'));
 // Botón "atrás" del teléfono: lo llama MainActivity. true = ya lo manejé
-window.__back=()=>{const sh=document.querySelector('.sheet.show');if(sh){sh.classList.remove('show');return true}if(sel){exitSel();return true}if(view==='player'){setView('list');return true}if(plSel){plSel=null;render();return true}if(showPl){showPl=false;chips();render();return true}return false};
+window.__back=()=>{const sh=document.querySelector('.sheet.show');if(sh){closeSheet(sh);return true}if(sel){exitSel();return true}if(view==='player'){setView('list');return true}if(plSel){plSel=null;render();return true}if(showPl){showPl=false;chips();render();return true}return false};
 function setTitle(t){
   const m=$('#mq'),h=$('#title');
   h.textContent=t;m.classList.remove('run');
@@ -587,13 +592,6 @@ function toggleSel(s){const k=keyOf(s);sel.has(k)?sel.delete(k):sel.add(k);if(!s
 function exitSel(){sel=null;document.body.classList.remove('selmode');paintSel()}
 $('#selBack').onclick=exitSel;
 $('#selAll').onclick=()=>{if(!sel)return;$('#list').querySelectorAll('li[data-k]').forEach(li=>sel.add(li.dataset.k));paintSel()};
-// ----- Reproducir a continuación -----
-function playNext(ids){
-  if(!ids.length)return;
-  if(cur===null){play(ids[0]);queue.unshift(...ids.slice(1));showToast('Reproduciendo');return}
-  queue.unshift(...ids);
-  showToast(ids.length===1?'Suena a continuación':ids.length+' canciones a continuación');
-}
 // ----- Ocultar -----
 function buildHid(){
   const hs=allSongs.filter(s=>hid.has(keyOf(s)));
@@ -603,7 +601,6 @@ function buildHid(){
 function hideSongs(ids){
   if(!ids.length)return;
   const ks=ids.map(String);ks.forEach(k=>hid.add(k));saveHid();
-  queue=queue.filter(q=>!ks.includes(String(q)));
   if(cur!==null&&ks.includes(String(cur))){
     audio.pause();audio.removeAttribute('src');audio.load();cur=null;
     if(view==='player')setView('list');
@@ -616,7 +613,8 @@ function hideSongs(ids){
 $('#sHid').onclick=()=>{$('#set').classList.remove('show');buildHid();$('#hidSheet').classList.add('show')};
 $('#hidSheet').onclick=e=>{
   const b=e.target.closest('button');
-  if(!b){if(e.target.id==='hidSheet')$('#hidSheet').classList.remove('show');return}
+  if(!b){if(e.target.id==='hidSheet')closeSheet($('#hidSheet'));return}
+  if(b.classList.contains('sback')){closeSheet($('#hidSheet'));return}
   if(b.dataset.a==='all')hid.clear();else hid.delete(b.dataset.id);
   saveHid();songs=allSongs.filter(s=>!hid.has(keyOf(s)));render();buildHid();
 };
@@ -629,8 +627,15 @@ function doName(){const v=$('#plName').value.trim();if(!v)return;$('#nameSheet')
 $('#nameOk').onclick=doName;
 $('#plName').onkeydown=e=>{if(e.key==='Enter')doName()};
 $('#nameSheet').onclick=e=>{if(e.target.id==='nameSheet')$('#nameSheet').classList.remove('show')};
+function plThumb(p){
+  for(const i of p.ids){const s=songs.find(x=>keyOf(x)===String(i));if(s){const u=coverUrl(s);if(u)return `background:center/cover url(${u})`}}
+  return '';
+}
 function buildAddList(){
-  $('#addList').innerHTML='<button class="row" data-p="new"><span class="rl">＋ Nueva lista</span></button>'+pls.map(p=>`<button class="row" data-p="${esc(p.id)}"><span class="rl">${esc(p.name)}</span><span class="rv">${p.ids.length}</span></button>`).join('');
+  const have=new Set(songs.map(keyOf));
+  $('#addList').innerHTML='<button class="plr new" data-p="new"><span class="plt"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="M5 12h14"/></svg></span><span class="plm"><b>Nueva lista</b><small>Crear una y agregar aquí</small></span></button>'+
+  pls.map(p=>{const c=p.ids.filter(i=>have.has(String(i))).length,ts=plThumb(p);
+    return `<button class="plr" data-p="${esc(p.id)}"><span class="plt" style="${ts}">${ts?'':'<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>'}</span><span class="plm"><b>${esc(p.name)}</b><small>${c} ${c===1?'canción':'canciones'}</small></span><span class="plp"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="M5 12h14"/></svg></span></button>`}).join('');
 }
 function openAddTo(ids){if(!ids.length)return;pendIds=ids;buildAddList();$('#addTo').classList.add('show')}
 function addToPl(p,ids){
@@ -647,7 +652,6 @@ $('#addTo').onclick=e=>{
   else{const p=pls.find(x=>x.id===b.dataset.p);if(p){addToPl(p,ids);exitSel();render()}}
 };
 $('#aAdd').onclick=()=>openAddTo(selIds());
-$('#aNext').onclick=()=>{playNext(selIds());exitSel()};
 $('#aHide').onclick=()=>{const ids=selIds();exitSel();hideSongs(ids)};
 $('#aRem').onclick=()=>{
   const p=pls.find(x=>x.id===plSel);if(!p)return;
@@ -656,8 +660,9 @@ $('#aRem').onclick=()=>{
 };
 // opciones del menú ⋮ (canción actual)
 $('#mAdd').onclick=()=>{$('#menu').classList.remove('show');if(cur!==null)openAddTo([cur])};
-$('#mNext2').onclick=()=>{$('#menu').classList.remove('show');if(cur!==null)playNext([cur])};
 $('#mHide').onclick=()=>{$('#menu').classList.remove('show');if(cur!==null)hideSongs([cur])};
+// Cerrar una hoja y, si viene de otra (Ajustes, menú ⋮), volver a ella
+function closeSheet(el){el.classList.remove('show');const p=el.dataset.parent;if(p)$('#'+p).classList.add('show')}
 // Aviso corto en pantalla
 let toastT;
 function showToast(t){const e=$('#toast');e.textContent=t;e.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>e.classList.remove('show'),1400)}
@@ -707,7 +712,12 @@ $('#pMore').onclick=()=>{
 };
 $('#menu').onclick=e=>{if(e.target.id==='menu')$('#menu').classList.remove('show')};
 $('#mSpeed').onclick=()=>{$('#menu').classList.remove('show');buildSpd();$('#spd').classList.add('show')};
-$('#spd').onclick=e=>{const b=e.target.closest('button');if(b)setSpeed(+b.dataset.v);if(b||e.target.id==='spd')$('#spd').classList.remove('show')};
+$('#spd').onclick=e=>{
+  const b=e.target.closest('button');
+  if(b&&b.classList.contains('sback')){closeSheet($('#spd'));return}
+  if(b){setSpeed(+b.dataset.v);$('#spd').classList.remove('show')}
+  else if(e.target.id==='spd')closeSheet($('#spd'));
+};
 setSpeed(speed);
 // Temporizador de sueño
 let sleepT=null,sleepEnd=0,sleepEOT=false;
@@ -733,8 +743,8 @@ $('#set').onclick=e=>{if(e.target.id==='set')$('#set').classList.remove('show')}
 $('#sSleep').onclick=()=>{$('#set').classList.remove('show');$('#sheet').classList.add('show')};
 $('#sheet').onclick=e=>{
   const b=e.target.closest('button');
-  if(b)setSleep(b.dataset.m==='eot'?'eot':+b.dataset.m);
-  if(b||e.target.id==='sheet')$('#sheet').classList.remove('show');
+  if(b&&b.dataset.m!==undefined)setSleep(b.dataset.m==='eot'?'eot':+b.dataset.m);
+  if(b||e.target.id==='sheet')closeSheet($('#sheet'));
 };
 document.addEventListener('visibilitychange',()=>{if(document.hidden)saveLast()});
 $('#mOpen').onclick=openPlayer;
