@@ -105,6 +105,10 @@ li .x:hover{color:var(--acc2)}
 #spLbl{position:absolute;top:3px;right:-5px;font:700 10px/1 system-ui,sans-serif;background:var(--acc);color:#1a1424;padding:3px 5px;border-radius:8px}
 #spLbl:empty{display:none}
 #pEq.on,#pMode.on{color:var(--acc);border-color:var(--acc);background:#f2a53a1f}
+.sw{width:46px;height:28px;border-radius:14px;background:var(--line);position:relative;flex:none;transition:background .2s}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:var(--text);transition:transform .2s}
+.sw.on{background:var(--acc)}
+.sw.on::after{transform:translateX(18px)}
 .gear{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;color:var(--mute);flex:none}
 .gear.on{color:var(--acc)}
 .toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--panel);border:1px solid var(--line);color:var(--text);padding:10px 18px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:30;white-space:nowrap}
@@ -178,6 +182,7 @@ li .x:hover{color:var(--acc2)}
 </div>
 <div class="sheet" id="set"><div class="box"><h3>Ajustes</h3>
   <button class="row" id="sSleep"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><span class="rl">Temporizador para dormir</span><span class="rv" id="sleepVal">Desactivado</span><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--mute)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+  <button class="row" id="sAcc" role="switch" aria-checked="false"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13.5" cy="6.5" r=".6" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".6" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".6" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".6" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg><span class="rl">Botones con colores de la carátula</span><span class="sw" id="accSw"></span></button>
 </div></div>
 <div class="sheet" id="eq"><div class="box"><h3>Ecualizador</h3><div class="pres" id="pres"></div><div id="eqRows"></div></div></div>
 <div class="toast" id="toast"></div>
@@ -199,6 +204,7 @@ let db,songs=[],cur=null,shuffle=false,repeat=0,url=null,drag=false;
 const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 const favs=new Set(LS.get('vin_fav',[]).map(String));
 let onlyFav=false,restored=false,lastSave=0;
+let accOn=LS.get('vin_acc',false)===true;
 const isFav=s=>favs.has(String(s.id));
 function toggleFav(s){const k=String(s.id);favs.has(k)?favs.delete(k):favs.add(k);LS.set('vin_fav',[...favs]);render();ui()}
 function saveLast(){if(cur!==null)LS.set('vin_last',{id:cur,pos:audio.currentTime||0})}
@@ -289,7 +295,7 @@ async function tintPlayer(u,sid){
   if(sid!==cur)return;
   if(!c){bg.style.opacity=0;setAccent(null);return}
   const[H,S]=rgbToHsl(c[0],c[1],c[2]);
-  if(S<.14)setAccent(null);
+  if(!accOn||S<.14)setAccent(null);
   else{const hs=(d,s,l)=>`hsl(${Math.round((H+d+360)%360)} ${s}% ${l}%)`;setAccent({acc:hs(15,82,66),acc2:hs(-30,78,58),soft:hs(5,70,84)})}
   const base=[26,20,36],mix=(t)=>{let v=c.map((a,i)=>a*t+base[i]*(1-t));const L=v[0]*.3+v[1]*.59+v[2]*.11;if(L>85)v=v.map(a=>a*85/L);return v.map(Math.round)};
   bg.style.background=`linear-gradient(180deg,rgb(${mix(.6)}) 0%,rgb(${mix(.22)}) 100%)`;bg.style.opacity=1;
@@ -532,6 +538,12 @@ function setSleep(m){
   updSleep();
 }
 function sleepNow(){audio.pause();setSleep(0)}
+function paintAcc(){$('#accSw').classList.toggle('on',accOn);$('#sAcc').setAttribute('aria-checked',accOn)}
+$('#sAcc').onclick=()=>{
+  accOn=!accOn;LS.set('vin_acc',accOn);paintAcc();
+  const s=songs.find(x=>x.id===cur);if(s)tintPlayer(coverUrl(s),s.id);else setAccent(null);
+};
+paintAcc();
 $('#gear').onclick=()=>$('#set').classList.add('show');
 $('#set').onclick=e=>{if(e.target.id==='set')$('#set').classList.remove('show')};
 $('#sSleep').onclick=()=>{$('#set').classList.remove('show');$('#sheet').classList.add('show')};
