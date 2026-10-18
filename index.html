@@ -138,6 +138,7 @@ body.selmode .lib{padding-bottom:120px}
 .plm small{color:var(--mute);font-size:13px}
 .plr.new .plt{background:none;border:2px dashed var(--acc);color:var(--acc)}
 .plr .plp{color:var(--acc);flex:none;display:grid}
+.plr .pill{flex:none;padding:7px 14px;border-radius:999px;border:1px solid var(--acc);color:var(--acc);font-size:13px;font-weight:700}
 .sh{display:flex;align-items:center;gap:6px;margin-bottom:10px}
 .sh h3{margin:0}
 .sheet .sback{display:grid;place-items:center;width:40px;height:40px;padding:0;border-radius:50%;margin-left:-8px;flex:none}
@@ -226,6 +227,7 @@ body.selmode .lib{padding-bottom:120px}
 <div class="sheet" id="set"><div class="box"><h3>Ajustes</h3>
   <button class="row" id="sSleep"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><span class="rl">Temporizador para dormir</span><span class="rv" id="sleepVal">Desactivado</span><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--mute)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
   <button class="row" id="sAcc" role="switch" aria-checked="false"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13.5" cy="6.5" r=".6" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".6" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".6" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".6" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg><span class="rl">Botones con colores de la carátula</span><span class="sw" id="accSw"></span></button>
+  <button class="row" id="sAuto" role="switch" aria-checked="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg><span class="rl">Ocultar audios que no son música</span><span class="sw" id="autoSw"></span></button>
   <button class="row" id="sHid"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg><span class="rl">Canciones ocultas</span><span class="rv" id="hidVal">Ninguna</span><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--mute)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
 </div></div>
 <div class="sheet" id="eq"><div class="box"><h3>Ecualizador</h3><div class="pres" id="pres"></div><div id="eqRows"></div></div></div>
@@ -256,6 +258,20 @@ const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 const hid=new Set(LS.get('vin_hid',[]).map(String));
 let pls=LS.get('vin_pl',[]);if(!Array.isArray(pls))pls=[];
 let allSongs=[],sel=null,showPl=false,plSel=null,ctx=null,lpUntil=0,pendIds=[],nameCb=null;
+let autoHide=LS.get('vin_auto',true)!==false;
+const force=new Set(LS.get('vin_show',[]).map(String));
+const saveForce=()=>LS.set('vin_show',[...force]);
+// ¿Es un audio que no es música? (notas de voz, grabaciones, audios muy cortos)
+function junkReason(x){
+  const n=x.displayName||'',p=x.path||'',m=x.mime||'';
+  if(/^(AUD|PTT)-\d{8}-WA\d+/i.test(n)||/whatsapp (voice notes|audio)/i.test(p))return 'Nota de voz o audio de WhatsApp';
+  if(/^(voice|recording|rec|grabaci[oó]n|nota de voz|voz)[\s_-]?\d/i.test(n)||/(recordings?|voice ?(recorder|memos?)|sound.?recorder|call.?recordings?|grabaciones|notas de voz)/i.test(p))return 'Grabación';
+  if(/amr|3gpp/i.test(m))return 'Audio de voz';
+  if(!x.isMusic&&x.duration>0&&x.duration<45000)return 'Audio muy corto';
+  return '';
+}
+const isHid=s=>hid.has(keyOf(s))||!!(autoHide&&s.junk&&!force.has(keyOf(s)));
+const hidWhy=s=>hid.has(keyOf(s))?'Oculta por ti':(s.junk||'');
 const savePl=()=>LS.set('vin_pl',pls);
 const saveHid=()=>LS.set('vin_hid',[...hid]);
 const isFav=s=>favs.has(String(s.id));
@@ -271,7 +287,7 @@ async function load(){
   const k=new Set(nat.map(x=>x.name+'|'+x.size));
   allSongs=nat.concat(all.filter(x=>!k.has(x.name+'|'+x.size)));
   allSongs.sort((a,b)=>dsp(a).t.localeCompare(dsp(b).t));
-  songs=allSongs.filter(s=>!hid.has(keyOf(s)));
+  songs=allSongs.filter(s=>!isHid(s));
   render();migrate();buildHid();
   if(!restored&&cur===null)tryRestore();
 }
@@ -594,19 +610,22 @@ $('#selBack').onclick=exitSel;
 $('#selAll').onclick=()=>{if(!sel)return;$('#list').querySelectorAll('li[data-k]').forEach(li=>sel.add(li.dataset.k));paintSel()};
 // ----- Ocultar -----
 function buildHid(){
-  const hs=allSongs.filter(s=>hid.has(keyOf(s)));
+  const hs=allSongs.filter(isHid);
   $('#hidVal').textContent=hs.length?String(hs.length):'Ninguna';
-  $('#hidList').innerHTML=hs.length?'<button class="row" data-a="all"><span class="rl">Mostrar todas</span></button>'+hs.map(s=>`<button class="row" data-id="${esc(keyOf(s))}"><span class="rl">${esc(dsp(s).t)}</span><span class="rv">Mostrar</span></button>`).join(''):emptyMsg('No hay canciones ocultas','Las que ocultes aparecerán aquí.');
+  if(!hs.length){$('#hidList').innerHTML=emptyMsg('No hay canciones ocultas','Las que ocultes, y los audios que no son música, aparecerán aquí.');return}
+  $('#hidList').innerHTML='<button class="plr new" data-a="all"><span class="plt"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></span><span class="plm"><b>Mostrar todas</b><small>'+hs.length+(hs.length===1?' canción oculta':' canciones ocultas')+'</small></span></button>'+
+  hs.map(s=>{const d=dsp(s),u=coverUrl(s),junk=!hid.has(keyOf(s));
+    return `<button class="plr" data-id="${esc(keyOf(s))}"><span class="plt" style="${u?`background:center/cover url(${u})`:''}">${u?'':(junk?'<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>':'<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>')}</span><span class="plm"><b>${esc(d.t)}</b><small>${esc(hidWhy(s)||d.a)}</small></span><span class="pill">Mostrar</span></button>`}).join('');
 }
 function hideSongs(ids){
   if(!ids.length)return;
-  const ks=ids.map(String);ks.forEach(k=>hid.add(k));saveHid();
+  const ks=ids.map(String);ks.forEach(k=>{hid.add(k);force.delete(k)});saveHid();saveForce();
   if(cur!==null&&ks.includes(String(cur))){
     audio.pause();audio.removeAttribute('src');audio.load();cur=null;
     if(view==='player')setView('list');
     if(NATIVE)ML.keepAlive({on:false}).catch(()=>{});
   }
-  songs=allSongs.filter(s=>!hid.has(keyOf(s)));
+  songs=allSongs.filter(s=>!isHid(s));
   ui();render();buildHid();
   showToast(ids.length===1?'Canción oculta':ids.length+' canciones ocultas');
 }
@@ -615,8 +634,10 @@ $('#hidSheet').onclick=e=>{
   const b=e.target.closest('button');
   if(!b){if(e.target.id==='hidSheet')closeSheet($('#hidSheet'));return}
   if(b.classList.contains('sback')){closeSheet($('#hidSheet'));return}
-  if(b.dataset.a==='all')hid.clear();else hid.delete(b.dataset.id);
-  saveHid();songs=allSongs.filter(s=>!hid.has(keyOf(s)));render();buildHid();
+  const showOne=k=>{hid.delete(k);const s=allSongs.find(x=>keyOf(x)===k);if(s&&s.junk)force.add(k)};
+  if(b.dataset.a==='all')allSongs.filter(isHid).forEach(s=>showOne(keyOf(s)));else showOne(b.dataset.id);
+  saveHid();saveForce();songs=allSongs.filter(s=>!isHid(s));render();buildHid();
+  loadCovers();
 };
 // ----- Listas de reproducción -----
 function askName(title,init,cb){
@@ -738,6 +759,13 @@ $('#sAcc').onclick=()=>{
   const s=songs.find(x=>x.id===cur);if(s)tintPlayer(coverUrl(s),s.id);else setAccent(null);
 };
 paintAcc();
+function paintAuto(){$('#autoSw').classList.toggle('on',autoHide);$('#sAuto').setAttribute('aria-checked',autoHide)}
+$('#sAuto').onclick=()=>{
+  autoHide=!autoHide;LS.set('vin_auto',autoHide);paintAuto();
+  songs=allSongs.filter(s=>!isHid(s));render();buildHid();loadCovers();
+  showToast(autoHide?'Audios que no son música: ocultos':'Mostrando todos los audios');
+};
+paintAuto();
 $('#gear').onclick=()=>$('#set').classList.add('show');
 $('#set').onclick=e=>{if(e.target.id==='set')$('#set').classList.remove('show')};
 $('#sSleep').onclick=()=>{$('#set').classList.remove('show');$('#sheet').classList.add('show')};
@@ -828,9 +856,9 @@ async function scanPhone(){
     if(!p.granted){$('#count').textContent='Permite el acceso a tu música para ver tus canciones';return}
     const r=await ML.scan();
     const old=new Map(nat.map(x=>[x.id,x]));
-    nat=r.songs.filter(x=>!/^(AUD|PTT)-\d{8}-WA\d+/i.test(x.displayName||'')).map(x=>{
+    nat=r.songs.map(x=>{
       const id='n'+x.id,nm=(x.displayName||x.title||'').replace(/\.[^.]+$/,'');
-      return Object.assign(old.get(id)||{},{id,name:nm,title:(x.title&&x.title!==nm)?x.title:'',artist:(x.artist&&x.artist!=='<unknown>')?x.artist:'',size:x.size,uri:x.uri,native:true,tg:1});
+      return Object.assign(old.get(id)||{},{id,name:nm,title:(x.title&&x.title!==nm)?x.title:'',artist:(x.artist&&x.artist!=='<unknown>')?x.artist:'',size:x.size,uri:x.uri,native:true,tg:1,junk:junkReason(x)});
     });
     await load();
     if(!nat.length)$('#count').textContent='Android no encontró música en el teléfono';
@@ -842,7 +870,7 @@ async function loadCovers(){
   if(covering)return;covering=true;let n=0;
   try{
     for(const s of nat){
-      if(s.cover||s.nc)continue;
+      if(s.cover||s.nc||isHid(s))continue;
       try{
         const r=await ML.cover({uri:s.uri});
         if(r.data){s.cover=await (await fetch('data:image/jpeg;base64,'+r.data)).blob();n++;if(n%25===0)render()}else s.nc=true;
