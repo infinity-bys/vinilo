@@ -93,6 +93,9 @@ li .x:hover{color:var(--acc2)}
 .pbtn span:empty{display:none}
 .ctrl button{color:var(--text)}
 .ctrl #prev svg,.ctrl #next svg{width:26px;height:26px}
+.ctrl #prev,.ctrl #next,.mini #mNext{color:var(--soft,var(--text))}
+.ctrl .main{box-shadow:0 8px 22px color-mix(in srgb,var(--acc2) 33%,transparent)}
+#pEq.on,#pMode.on{background:color-mix(in srgb,var(--acc) 14%,transparent)}
 .ctrl .main svg{width:30px;height:30px}
 .ctrl #pFav,.ctrl #pMore{color:var(--mute)}
 .ctrl #pFav.on{color:var(--acc2)}
@@ -265,12 +268,29 @@ function coverColor(u){return new Promise(res=>{
   }catch(e){res(null)}};
   im.onerror=()=>res(null);im.src=u;
 })}
+function rgbToHsl(r,g,b){
+  r/=255;g/=255;b/=255;const mx=Math.max(r,g,b),mn=Math.min(r,g,b),d=mx-mn,l=(mx+mn)/2;let H=0,S=0;
+  if(d){S=d/(1-Math.abs(2*l-1));if(mx===r)H=((g-b)/d)%6;else if(mx===g)H=(b-r)/d+2;else H=(r-g)/d+4;H*=60;if(H<0)H+=360}
+  return[H,S,l];
+}
+let vizTop='#f2a53a',vizBot='#e8644f';
+function setAccent(a){
+  [$('.player'),$('#mini')].forEach(el=>{
+    if(!el)return;
+    if(a){el.style.setProperty('--acc',a.acc);el.style.setProperty('--acc2',a.acc2);el.style.setProperty('--soft',a.soft)}
+    else['--acc','--acc2','--soft'].forEach(k=>el.style.removeProperty(k));
+  });
+  vizTop=a?a.acc:'#f2a53a';vizBot=a?a.acc2:'#e8644f';
+}
 async function tintPlayer(u,sid){
   const bg=$('#pbg');
-  if(!u){bg.style.opacity=0;return}
+  if(!u){bg.style.opacity=0;setAccent(null);return}
   const c=await coverColor(u);
   if(sid!==cur)return;
-  if(!c){bg.style.opacity=0;return}
+  if(!c){bg.style.opacity=0;setAccent(null);return}
+  const[H,S]=rgbToHsl(c[0],c[1],c[2]);
+  if(S<.14)setAccent(null);
+  else{const hs=(d,s,l)=>`hsl(${Math.round((H+d+360)%360)} ${s}% ${l}%)`;setAccent({acc:hs(15,82,66),acc2:hs(-30,78,58),soft:hs(5,70,84)})}
   const base=[26,20,36],mix=(t)=>{let v=c.map((a,i)=>a*t+base[i]*(1-t));const L=v[0]*.3+v[1]*.59+v[2]*.11;if(L>85)v=v.map(a=>a*85/L);return v.map(Math.round)};
   bg.style.background=`linear-gradient(180deg,rgb(${mix(.6)}) 0%,rgb(${mix(.22)}) 100%)`;bg.style.opacity=1;
 }
@@ -430,7 +450,7 @@ function ui(){
   $('#play').innerHTML=on?PAUSE:PLAY;$('#mPlay').innerHTML=on?PAUSE:PLAY;$('#app').classList.toggle('has',cur!==null);
   $('#play').setAttribute('aria-label',on?'Pausar':'Reproducir');
   const cs=songs.find(x=>x.id===cur),fv=!!(cs&&isFav(cs));$('#pFav').classList.toggle('on',fv);$('#pFav').setAttribute('aria-pressed',fv);
-  if(cur===null){$('#pbg').style.opacity=0;$('#mprog').style.width='0';$('#lab').classList.remove('on');$('#md').style.background='';setTitle('Elige una canción');$('#sub').textContent='Tu música, sin conexión';$('#cur').textContent='0:00';$('#dur').textContent='0:00';$('#seek').value=0;paint($('#seek'))}
+  if(cur===null){setAccent(null);$('#pbg').style.opacity=0;$('#mprog').style.width='0';$('#lab').classList.remove('on');$('#md').style.background='';setTitle('Elige una canción');$('#sub').textContent='Tu música, sin conexión';$('#cur').textContent='0:00';$('#dur').textContent='0:00';$('#seek').value=0;paint($('#seek'))}
 }
 
 // ---------- Controles ----------
@@ -560,7 +580,7 @@ function draw(){
   if(ac&&ac.state==='suspended')ac.resume();
   const d=new Uint8Array(an.frequencyBinCount);an.getByteFrequencyData(d);
   const n=28,g=w/n,bw=g*.62;
-  const grad=x.createLinearGradient(0,h,0,0);grad.addColorStop(0,'#e8644f');grad.addColorStop(1,'#f2a53a');
+  const grad=x.createLinearGradient(0,h,0,0);grad.addColorStop(0,vizBot);grad.addColorStop(1,vizTop);
   x.clearRect(0,0,w,h);x.fillStyle=grad;
   for(let i=0;i<n;i++){
     const v=d[Math.floor(i*d.length/n)]/255,bh=Math.max(3*devicePixelRatio,v*h);
