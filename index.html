@@ -109,7 +109,10 @@ li .x:hover{color:var(--acc2)}
 .sw::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:var(--text);transition:transform .2s}
 .sw.on{background:var(--acc)}
 .sw.on::after{transform:translateX(18px)}
-.sheet .box{max-height:82vh;overflow-y:auto}
+.sheet .box{display:flex;flex-direction:column;max-height:82vh;overflow:hidden}
+.sheet .box>h3,.sheet .box>.sh{flex:none}
+.sheet .bd{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch}
+#plName:focus,#plName:focus-visible{outline-offset:-2px}
 #list li{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 .rad{display:none;width:26px;height:26px;border-radius:50%;border:2px solid var(--mute);flex:none;place-items:center;font-size:15px;font-weight:700;color:#1a1424}
 body.selmode .rad{display:grid}
@@ -140,8 +143,6 @@ body.selmode .lib{padding-bottom:120px}
 .plr .plp{color:var(--acc);flex:none;display:grid}
 .plr .pill{flex:none;padding:7px 14px;border-radius:999px;border:1px solid var(--acc);color:var(--acc);font-size:13px;font-weight:700}
 .sh{display:flex;align-items:center;gap:6px;margin-bottom:10px}
-.sheet .box>h3,.sheet .box>.sh{position:sticky;top:0;z-index:2;background:var(--panel);margin:-18px -16px 10px;padding:18px 16px 10px}
-.sheet .box>.sh{padding-left:8px}
 .plh{position:sticky;top:0;z-index:3;background:var(--bg);padding:8px 0}
 .sh h3{margin:0}
 .sheet .sback{display:grid;place-items:center;width:40px;height:40px;padding:0;border-radius:50%;margin-left:-8px;flex:none}
@@ -224,27 +225,27 @@ body.selmode .lib{padding-bottom:120px}
   <button id="aHide"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg><span>Ocultar</span></button>
   <button id="aRem" style="display:none"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 12H3"/><path d="M16 6H3"/><path d="M16 18H3"/><path d="M21 12h-6"/></svg><span>Quitar</span></button>
 </div>
-<div class="sheet" id="addTo"><div class="box"><h3>Agregar a la lista</h3><div id="addList"></div></div></div>
-<div class="sheet" id="nameSheet"><div class="box"><h3 id="nameTitle">Nueva lista</h3><input id="plName" maxlength="40" placeholder="Nombre de la lista" autocomplete="off"><button class="row" id="nameOk"><span class="rl">Guardar</span><svg class="ck" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></button></div></div>
-<div class="sheet" id="hidSheet" data-parent="set"><div class="box"><div class="sh"><button class="sback" aria-label="Atrás"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><h3>Canciones ocultas</h3></div><div id="hidList"></div></div></div>
-<div class="sheet" id="set"><div class="box"><h3>Ajustes</h3>
+<div class="sheet" id="addTo"><div class="box"><h3>Agregar a la lista</h3><div class="bd"><div id="addList"></div></div></div></div>
+<div class="sheet" id="nameSheet"><div class="box"><h3 id="nameTitle">Nueva lista</h3><div class="bd"><input id="plName" maxlength="40" placeholder="Nombre de la lista" autocomplete="off"><button class="row" id="nameOk"><span class="rl">Guardar</span><svg class="ck" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></button></div></div></div>
+<div class="sheet" id="hidSheet" data-parent="set"><div class="box"><div class="sh"><button class="sback" aria-label="Atrás"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><h3>Canciones ocultas</h3></div><div class="bd"><div id="hidList"></div></div></div></div>
+<div class="sheet" id="set"><div class="box"><h3>Ajustes</h3><div class="bd">
   <button class="row" id="sSleep"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><span class="rl">Temporizador para dormir</span><span class="rv" id="sleepVal">Desactivado</span><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--mute)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
   <button class="row" id="sAcc" role="switch" aria-checked="false"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13.5" cy="6.5" r=".6" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".6" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".6" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".6" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg><span class="rl">Botones con colores de la carátula</span><span class="sw" id="accSw"></span></button>
   <button class="row" id="sAuto" role="switch" aria-checked="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg><span class="rl">Ocultar audios que no son música</span><span class="sw" id="autoSw"></span></button>
   <button class="row" id="sHid"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg><span class="rl">Canciones ocultas</span><span class="rv" id="hidVal">Ninguna</span><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--mute)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
-</div></div>
-<div class="sheet" id="eq"><div class="box"><h3>Ecualizador</h3><div class="pres" id="pres"></div><div id="eqRows"></div></div></div>
+</div></div></div>
+<div class="sheet" id="eq"><div class="box"><h3>Ecualizador</h3><div class="bd"><div class="pres" id="pres"></div><div id="eqRows"></div></div></div></div>
 <div class="toast" id="toast"></div>
-<div class="sheet" id="sheet" data-parent="set"><div class="box"><div class="sh"><button class="sback" aria-label="Atrás"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><h3>Temporizador de sueño</h3></div>
+<div class="sheet" id="sheet" data-parent="set"><div class="box"><div class="sh"><button class="sback" aria-label="Atrás"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><h3>Temporizador de sueño</h3></div><div class="bd">
   <button data-m="15">15 minutos</button><button data-m="30">30 minutos</button><button data-m="45">45 minutos</button><button data-m="60">1 hora</button>
-  <button data-m="eot">Al terminar esta canción</button><button data-m="0" class="off" id="sOff">Desactivar</button></div></div>
+  <button data-m="eot">Al terminar esta canción</button><button data-m="0" class="off" id="sOff">Desactivar</button></div></div></div>
 <div class="sheet" id="menu"><div class="box">
   <div class="mh"><span class="mthumb" id="mThumb"></span><div class="mht"><b id="mhT">Vinilo</b><small id="mhA"></small></div></div>
   <button class="row" id="mAdd"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 12H3"/><path d="M16 6H3"/><path d="M16 18H3"/><path d="M18 9v6"/><path d="M21 12h-6"/></svg><span class="rl">Agregar a la lista de reproducción</span></button>
   <button class="row" id="mSpeed"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg><span class="rl">Velocidad de reproducción</span><span class="rv" id="spdVal">Normal</span><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--mute)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
   <button class="row" id="mHide"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg><span class="rl">Ocultar</span></button>
 </div></div>
-<div class="sheet" id="spd" data-parent="menu"><div class="box"><div class="sh"><button class="sback" aria-label="Atrás"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><h3>Velocidad de reproducción</h3></div><div id="spdList"></div></div></div>
+<div class="sheet" id="spd" data-parent="menu"><div class="box"><div class="sh"><button class="sback" aria-label="Atrás"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><h3>Velocidad de reproducción</h3></div><div class="bd"><div id="spdList"></div></div></div></div>
 <audio id="a" preload="metadata"></audio>
 
 <script>
