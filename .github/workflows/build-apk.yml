@@ -374,11 +374,14 @@ jobs:
                               MediaStore.Audio.Media.TITLE,
                               MediaStore.Audio.Media.ARTIST,
                               MediaStore.Audio.Media.DISPLAY_NAME,
-                              MediaStore.Audio.Media.SIZE
+                              MediaStore.Audio.Media.SIZE,
+                              MediaStore.Audio.Media.DURATION,
+                              MediaStore.Audio.Media.IS_MUSIC,
+                              MediaStore.Audio.Media.MIME_TYPE,
+                              MediaStore.Audio.Media.DATA
                           };
                           Cursor c = getContext().getContentResolver().query(
-                              base, proj, "(" + MediaStore.Audio.Media.IS_MUSIC + " != 0 OR " + MediaStore.Audio.Media.DURATION + " >= 45000) AND "
-                              + MediaStore.Audio.Media.IS_RINGTONE + " = 0 AND " + MediaStore.Audio.Media.IS_ALARM + " = 0 AND "
+                              base, proj, MediaStore.Audio.Media.IS_RINGTONE + " = 0 AND " + MediaStore.Audio.Media.IS_ALARM + " = 0 AND "
                               + MediaStore.Audio.Media.IS_NOTIFICATION + " = 0", null,
                               MediaStore.Audio.Media.TITLE + " COLLATE NOCASE ASC");
                           if (c != null) {
@@ -391,6 +394,10 @@ jobs:
                                       o.put("artist", c.getString(2));
                                       o.put("displayName", c.getString(3));
                                       o.put("size", c.getLong(4));
+                                      o.put("duration", c.getLong(5));
+                                      o.put("isMusic", c.getInt(6));
+                                      o.put("mime", c.getString(7));
+                                      o.put("path", c.getString(8));
                                       o.put("uri", ContentUris.withAppendedId(base, id).toString());
                                       arr.put(o);
                                   }
