@@ -133,7 +133,12 @@ body.selmode .lib{padding-bottom:120px}
 .newpl{width:100%;padding:13px;border-radius:14px;border:1px dashed var(--acc);color:var(--acc);font-weight:700;margin-bottom:4px}
 .plh{display:flex;align-items:center;gap:8px;margin-bottom:4px}
 .plh b{flex:1;min-width:0;font:600 18px Georgia,serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-#plName{width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--text);font-size:16px;margin-bottom:10px}
+#plName{width:100%;padding:15px 16px;border-radius:16px;border:1px solid var(--line);background:var(--bg);color:var(--text);font-size:17px;margin-bottom:8px}
+.hint{color:var(--mute);font-size:13px;margin:0 4px 16px}
+.sheet button.btnp{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px;border-radius:16px;background:linear-gradient(135deg,var(--acc),var(--acc2));color:#1a1424;font-weight:700;font-size:16px;text-align:center;box-shadow:0 8px 22px color-mix(in srgb,var(--acc2) 30%,transparent);transition:opacity .2s,transform .15s}
+.sheet button.btnp:active{transform:scale(.97);background:linear-gradient(135deg,var(--acc),var(--acc2))}
+.sheet button.btnp:disabled{opacity:.4;box-shadow:none}
+.row .dir{color:var(--acc);flex:none}
 .sheet .plr{display:flex;align-items:center;gap:14px;padding:10px 8px;border-radius:16px}
 .plt{width:52px;height:52px;border-radius:14px;flex:none;display:grid;place-items:center;background:linear-gradient(135deg,var(--acc),var(--acc2));color:#1a1424}
 .plm{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;text-align:left}
@@ -204,7 +209,7 @@ body.selmode .lib{padding-bottom:120px}
   </section>
 
   <section class="lib">
-    <div class="bar"><h1>Vinilo</h1><button class="add" id="addBtn">+ Añadir</button><button class="add alt" id="dirBtn">Carpeta</button><button class="gear" id="gear" aria-label="Ajustes"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+    <div class="bar"><h1>Vinilo</h1><button class="add" id="addBtn">+ Añadir</button><button class="add alt" id="dirBtn">Carpeta</button><button class="gear" id="sortBtn" aria-label="Ordenar canciones"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="M11 4h4"/><path d="M11 8h7"/><path d="M11 12h10"/></svg></button><button class="gear" id="gear" aria-label="Ajustes"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
     <input type="file" id="file" accept="audio/*,.mp3,.m4a,.wav,.ogg,.flac,.aac,.opus" multiple hidden>
     <input type="file" id="dir" webkitdirectory multiple hidden>
     <input class="search" id="q" type="search" placeholder="Buscar canción" aria-label="Buscar">
@@ -226,8 +231,9 @@ body.selmode .lib{padding-bottom:120px}
   <button id="aRem" style="display:none"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 12H3"/><path d="M16 6H3"/><path d="M16 18H3"/><path d="M21 12h-6"/></svg><span>Quitar</span></button>
 </div>
 <div class="sheet" id="addTo"><div class="box"><h3>Agregar a la lista</h3><div class="bd"><div id="addList"></div></div></div></div>
-<div class="sheet" id="nameSheet"><div class="box"><h3 id="nameTitle">Nueva lista</h3><div class="bd"><input id="plName" maxlength="40" placeholder="Nombre de la lista" autocomplete="off"><button class="row" id="nameOk"><span class="rl">Guardar</span><svg class="ck" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></button></div></div></div>
+<div class="sheet" id="nameSheet"><div class="box"><h3 id="nameTitle">Nueva lista</h3><div class="bd"><input id="plName" maxlength="40" placeholder="Nombre de la lista" autocomplete="off"><p class="hint">Ponle un nombre fácil de recordar.</p><button class="btnp" id="nameOk" disabled><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span id="nameOkTxt">Crear lista</span></button></div></div></div>
 <div class="sheet" id="hidSheet" data-parent="set"><div class="box"><div class="sh"><button class="sback" aria-label="Atrás"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><h3>Canciones ocultas</h3></div><div class="bd"><div id="hidList"></div></div></div></div>
+<div class="sheet" id="sortSheet"><div class="box"><h3>Ordenar canciones por</h3><div class="bd" id="sortList"></div></div></div>
 <div class="sheet" id="set"><div class="box"><h3>Ajustes</h3><div class="bd">
   <button class="row" id="sSleep"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><span class="rl">Temporizador para dormir</span><span class="rv" id="sleepVal">Desactivado</span><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--mute)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
   <button class="row" id="sAcc" role="switch" aria-checked="false"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13.5" cy="6.5" r=".6" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".6" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".6" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".6" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg><span class="rl">Botones con colores de la carátula</span><span class="sw" id="accSw"></span></button>
@@ -263,6 +269,20 @@ const hid=new Set(LS.get('vin_hid',[]).map(String));
 let pls=LS.get('vin_pl',[]);if(!Array.isArray(pls))pls=[];
 let allSongs=[],sel=null,showPl=false,plSel=null,ctx=null,lpUntil=0,pendIds=[],nameCb=null;
 let autoHide=LS.get('vin_auto',true)!==false;
+// Orden de la lista
+const SORTS=[{k:'recent',n:'Más recientes',d:-1},{k:'plays',n:'Más reproducidas',d:-1},{k:'az',n:'A a Z',d:1},{k:'artist',n:'Artista',d:1},{k:'dur',n:'Duración más larga',d:-1}];
+let sortS=LS.get('vin_sort',{k:'az',d:1});if(!sortS||!SORTS.some(x=>x.k===sortS.k)||(sortS.d!==1&&sortS.d!==-1))sortS={k:'az',d:1};
+let cntId=null;
+let plays=LS.get('vin_plays',{});if(!plays||typeof plays!=='object')plays={};
+function sortSongs(arr){
+  const m=sortS.d,t=s=>dsp(s).t,al=(a,b)=>t(a).localeCompare(t(b));
+  const num={recent:s=>s.added||0,plays:s=>plays[keyOf(s)]||0,dur:s=>s.duration||s.dur||0}[sortS.k];
+  arr.sort((a,b)=>{
+    if(sortS.k==='az')return al(a,b)*m;
+    if(sortS.k==='artist'){const x=dsp(a).a||'\uffff',y=dsp(b).a||'\uffff';return x.localeCompare(y)*m||al(a,b)}
+    return(num(a)-num(b))*m||al(a,b);
+  });
+}
 const force=new Set(LS.get('vin_show',[]).map(String));
 const saveForce=()=>LS.set('vin_show',[...force]);
 // ¿Es un audio que no es música? (notas de voz, grabaciones, audios muy cortos)
@@ -290,7 +310,7 @@ async function load(){
   const all=await wrap(store('readonly').getAll());
   const k=new Set(nat.map(x=>x.name+'|'+x.size));
   allSongs=nat.concat(all.filter(x=>!k.has(x.name+'|'+x.size)));
-  allSongs.sort((a,b)=>dsp(a).t.localeCompare(dsp(b).t));
+  sortSongs(allSongs);
   songs=allSongs.filter(s=>!isHid(s));
   render();migrate();buildHid();
   if(!restored&&cur===null)tryRestore();
@@ -318,7 +338,7 @@ async function add(files){
     const name=f.name.replace(/\.[^.]+$/,''),k=name+'|'+f.size;
     if(seen.has(k))continue;seen.add(k);
     const t=await readTags(f);
-    await wrap(store('readwrite').add({name,size:f.size,blob:f,title:t.title,artist:t.artist,cover:t.cover,tg:1}));n++;
+    await wrap(store('readwrite').add({name,size:f.size,blob:f,title:t.title,artist:t.artist,cover:t.cover,tg:1,added:Math.floor(Date.now()/1000)}));n++;
   }
   await load();
   $('#count').textContent=n?`${n} ${n===1?'canción añadida':'canciones añadidas'}`:'Esas canciones ya estaban en tu biblioteca';
@@ -471,7 +491,7 @@ function render(){
     hd.innerHTML=`<button class="gear" id="plBack" aria-label="Volver a las listas"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><b>${esc(p.name)}</b><button class="chip" id="plRen">Renombrar</button><button class="chip" id="plDel">Eliminar</button>`;
     list.append(hd);
     hd.querySelector('#plBack').onclick=()=>{plSel=null;exitSel();render()};
-    hd.querySelector('#plRen').onclick=()=>askName('Renombrar lista',p.name,n=>{p.name=n;savePl();render()});
+    hd.querySelector('#plRen').onclick=()=>askName('Renombrar lista',p.name,n=>{p.name=n;savePl();render()},'Guardar');
     hd.querySelector('#plDel').onclick=()=>{if(confirm('¿Eliminar la lista «'+p.name+'»? Las canciones no se borran.')){pls=pls.filter(x=>x.id!==p.id);savePl();plSel=null;exitSel();render()}};
     if(!shown.length&&!q){list.insertAdjacentHTML('beforeend',emptyMsg('Esta lista está vacía','Mantén presionada una canción y toca «Agregar a».'));return}
   }
@@ -515,6 +535,7 @@ async function play(id){
   if(url){URL.revokeObjectURL(url);url=null}
   if(s.uri)audio.src=Capacitor.convertFileSrc(s.uri);else{url=URL.createObjectURL(s.blob);audio.src=url}
   cur=id;LS.set('vin_last',{id,pos:0});
+  cntId=null;
   startViz();
   try{await audio.play()}catch(e){}
   meta(s);
@@ -542,6 +563,7 @@ audio.onended=()=>{
 audio.onplay=audio.onpause=()=>{ui();render();saveLast()};
 audio.ontimeupdate=()=>{
   const now=Date.now();if(now-lastSave>4000){lastSave=now;saveLast()}
+  if(cur!==null&&cntId!==cur&&audio.currentTime>=20){cntId=cur;const k=String(cur);plays[k]=(plays[k]||0)+1;LS.set('vin_plays',plays)}
   if(sleepEnd){const rem=sleepEnd-now;if(rem<=0)sleepNow();else if(rem<10000)audio.volume=Math.max(0,rem/10000);updSleep()}
   if(drag||!audio.duration)return;
   const p=audio.currentTime/audio.duration*1000;
@@ -600,6 +622,20 @@ const chips=()=>{$('#fAll').classList.toggle('on',!onlyFav&&!showPl);$('#fFav').
 $('#fAll').onclick=()=>{onlyFav=false;showPl=false;plSel=null;exitSel();chips();render()};
 $('#fFav').onclick=()=>{onlyFav=true;showPl=false;plSel=null;exitSel();chips();render()};
 $('#fPl').onclick=()=>{onlyFav=false;showPl=true;plSel=null;exitSel();chips();render()};
+// ----- Ordenar -----
+function buildSort(){
+  $('#sortList').innerHTML=SORTS.map(o=>{const on=sortS.k===o.k;return `<button class="row${on?' sel':''}" data-k="${o.k}"><span class="rl">${o.n}</span>${on?(sortS.d>0?'<svg class="dir" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>':'<svg class="dir" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>'):''}</button>`}).join('');
+}
+$('#sortBtn').onclick=()=>{buildSort();$('#sortSheet').classList.add('show')};
+$('#sortSheet').onclick=e=>{
+  const b=e.target.closest('button');
+  if(b){
+    const k=b.dataset.k;
+    if(sortS.k===k)sortS={k,d:-sortS.d};else sortS={k,d:SORTS.find(x=>x.k===k).d};
+    LS.set('vin_sort',sortS);sortSongs(allSongs);songs=allSongs.filter(s=>!isHid(s));render();window.scrollTo(0,0);
+  }
+  if(b||e.target.id==='sortSheet')$('#sortSheet').classList.remove('show');
+};
 // ----- Selección (mantener presionada una canción) -----
 function selIds(){return songs.filter(s=>sel&&sel.has(keyOf(s))).map(s=>s.id)}
 function paintSel(){
@@ -644,13 +680,14 @@ $('#hidSheet').onclick=e=>{
   loadCovers();
 };
 // ----- Listas de reproducción -----
-function askName(title,init,cb){
-  nameCb=cb;$('#nameTitle').textContent=title;const i=$('#plName');i.value=init;
+function askName(title,init,cb,ok){
+  nameCb=cb;$('#nameTitle').textContent=title;$('#nameOkTxt').textContent=ok||'Crear lista';const i=$('#plName');i.value=init;$('#nameOk').disabled=!init.trim();
   $('#nameSheet').classList.add('show');setTimeout(()=>{i.focus();i.select()},150);
 }
 function doName(){const v=$('#plName').value.trim();if(!v)return;$('#nameSheet').classList.remove('show');const f=nameCb;nameCb=null;if(f)f(v)}
 $('#nameOk').onclick=doName;
 $('#plName').onkeydown=e=>{if(e.key==='Enter')doName()};
+$('#plName').oninput=()=>{$('#nameOk').disabled=!$('#plName').value.trim()};
 $('#nameSheet').onclick=e=>{if(e.target.id==='nameSheet')$('#nameSheet').classList.remove('show')};
 function plThumb(p){
   for(const i of p.ids){const s=songs.find(x=>keyOf(x)===String(i));if(s){const u=coverUrl(s);if(u)return `background:center/cover url(${u})`}}
@@ -862,7 +899,7 @@ async function scanPhone(){
     const old=new Map(nat.map(x=>[x.id,x]));
     nat=r.songs.map(x=>{
       const id='n'+x.id,nm=(x.displayName||x.title||'').replace(/\.[^.]+$/,'');
-      return Object.assign(old.get(id)||{},{id,name:nm,title:(x.title&&x.title!==nm)?x.title:'',artist:(x.artist&&x.artist!=='<unknown>')?x.artist:'',size:x.size,uri:x.uri,native:true,tg:1,junk:junkReason(x)});
+      return Object.assign(old.get(id)||{},{id,name:nm,title:(x.title&&x.title!==nm)?x.title:'',artist:(x.artist&&x.artist!=='<unknown>')?x.artist:'',size:x.size,uri:x.uri,native:true,tg:1,junk:junkReason(x),duration:x.duration,added:x.added});
     });
     await load();
     if(!nat.length)$('#count').textContent='Android no encontró música en el teléfono';
