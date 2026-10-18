@@ -91,8 +91,26 @@ li .x:hover{color:var(--acc2)}
 .pbtn:active{transform:scale(.94)}
 .pbtn svg{flex:none}
 .pbtn span:empty{display:none}
-.eg{display:flex;gap:10px}
-#pMore.on{color:var(--acc);border-color:var(--acc);background:#f2a53a1f}
+.ctrl button{color:var(--text)}
+.ctrl #prev svg,.ctrl #next svg{width:26px;height:26px}
+.ctrl .main svg{width:30px;height:30px}
+.ctrl #pFav,.ctrl #pMore{color:var(--mute)}
+.ctrl #pFav.on{color:var(--acc2)}
+.ctrl #pFav.on svg{fill:currentColor}
+.ctrl #pMore{position:relative}
+.ctrl #pMore.on{color:var(--acc)}
+#spLbl{position:absolute;top:3px;right:-5px;font:700 10px/1 system-ui,sans-serif;background:var(--acc);color:#1a1424;padding:3px 5px;border-radius:8px}
+#spLbl:empty{display:none}
+#pEq.on,#pMode.on{color:var(--acc);border-color:var(--acc);background:#f2a53a1f}
+.gear{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;color:var(--mute);flex:none}
+.gear.on{color:var(--acc)}
+.toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--panel);border:1px solid var(--line);color:var(--text);padding:10px 18px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:30;white-space:nowrap}
+.toast.show{opacity:1}
+.pres{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.sheet .pres button{display:inline-block;width:auto;padding:7px 14px;border-radius:999px;text-align:center;font-size:13px}
+.eqr{display:flex;align-items:center;gap:12px;padding:9px 2px}
+.eqr span{width:58px;font-size:13px;color:var(--mute);flex:none}
+.eqr b{width:56px;text-align:right;font-size:13px;flex:none}
 .mh{display:flex;align-items:center;gap:14px;padding:2px 4px 14px;margin-bottom:6px;border-bottom:1px solid var(--line)}
 .mthumb{width:56px;height:56px;border-radius:14px;flex:none;background:linear-gradient(135deg,var(--acc),var(--acc2))}
 .mht{min-width:0;display:flex;flex-direction:column}
@@ -105,10 +123,6 @@ li .x:hover{color:var(--acc2)}
 .row.sel .rl{color:var(--acc);font-weight:700}
 .row .ck{opacity:0;color:var(--acc)}
 .row.sel .ck{opacity:1}
-#pFav.on{color:var(--acc2);border-color:var(--acc2);background:#e8644f1f}
-#pFav.on svg{fill:currentColor}
-#pSleep.on{color:var(--acc);border-color:var(--acc);background:#f2a53a1f}
-#pSleep.on svg{fill:currentColor}
 .chips{display:flex;gap:8px;margin-bottom:10px}
 .chip{padding:7px 14px;border-radius:999px;border:1px solid var(--line);color:var(--mute);font-size:13px}
 .chip.on{background:var(--acc);color:#1a1424;border-color:var(--acc);font-weight:700}
@@ -131,23 +145,20 @@ li .x:hover{color:var(--acc2)}
     <div class="info"><div class="mq" id="mq"><h2 id="title">Elige una canción</h2></div><p id="sub">Tu música, sin conexión</p></div>
     <div class="seek"><span id="cur">0:00</span><input type="range" id="seek" min="0" max="1000" value="0" aria-label="Progreso"><span id="dur">0:00</span></div>
     <div class="ctrl">
-      <button id="shuf" aria-label="Aleatorio" title="Aleatorio">⇄</button>
-      <button id="prev" aria-label="Anterior">⏮</button>
+      <button id="pFav" aria-label="Favorita" aria-pressed="false"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+      <button id="prev" aria-label="Anterior"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="19 20 9 12 19 4 19 20" fill="currentColor"/><line x1="5" y1="19" x2="5" y2="5"/></svg></button>
       <button id="play" class="main" aria-label="Reproducir">▶</button>
-      <button id="next" aria-label="Siguiente">⏭</button>
-      <button id="rep" aria-label="Repetir" title="Repetir">↻</button>
+      <button id="next" aria-label="Siguiente"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="5 4 15 12 5 20 5 4" fill="currentColor"/><line x1="19" y1="5" x2="19" y2="19"/></svg></button>
+      <button id="pMore" aria-label="Más opciones"><svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="1.9"/><circle cx="12" cy="12" r="1.9"/><circle cx="12" cy="19" r="1.9"/></svg><span id="spLbl"></span></button>
     </div>
     <div class="extra">
-      <div class="eg">
-      <button class="pbtn" id="pFav" aria-label="Favorita" aria-pressed="false"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
-      <button class="pbtn" id="pMore" aria-label="Más opciones"><svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="1.9"/><circle cx="12" cy="12" r="1.9"/><circle cx="12" cy="19" r="1.9"/></svg><span id="spLbl"></span></button>
-      </div>
-      <button class="pbtn" id="pSleep" aria-label="Temporizador de sueño"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><span id="sLbl"></span></button>
+      <button class="pbtn" id="pEq" aria-label="Ecualizador"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" x2="4" y1="21" y2="14"/><line x1="4" x2="4" y1="10" y2="3"/><line x1="12" x2="12" y1="21" y2="12"/><line x1="12" x2="12" y1="8" y2="3"/><line x1="20" x2="20" y1="21" y2="16"/><line x1="20" x2="20" y1="12" y2="3"/><line x1="2" x2="6" y1="14" y2="14"/><line x1="10" x2="14" y1="8" y2="8"/><line x1="18" x2="22" y1="16" y2="16"/></svg></button>
+      <button class="pbtn" id="pMode" aria-label="Modo de reproducción"></button>
     </div>
   </section>
 
   <section class="lib">
-    <div class="bar"><h1>Vinilo</h1><button class="add" id="addBtn">+ Añadir</button><button class="add alt" id="dirBtn">Carpeta</button></div>
+    <div class="bar"><h1>Vinilo</h1><button class="add" id="addBtn">+ Añadir</button><button class="add alt" id="dirBtn">Carpeta</button><button class="gear" id="gear" aria-label="Ajustes"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
     <input type="file" id="file" accept="audio/*,.mp3,.m4a,.wav,.ogg,.flac,.aac,.opus" multiple hidden>
     <input type="file" id="dir" webkitdirectory multiple hidden>
     <input class="search" id="q" type="search" placeholder="Buscar canción" aria-label="Buscar">
@@ -159,9 +170,14 @@ li .x:hover{color:var(--acc2)}
     <div class="mprog" id="mprog"></div>
     <button class="mt" id="mOpen" aria-label="Abrir reproductor"><span class="md" id="md"></span><span class="mtx"><b id="mTitle"></b><small>Toca para abrir</small></span></button>
     <button class="ic pl" id="mPlay" aria-label="Reproducir/Pausar"></button>
-    <button class="ic" id="mNext" aria-label="Siguiente">⏭</button>
+    <button class="ic" id="mNext" aria-label="Siguiente"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="5 4 15 12 5 20 5 4" fill="currentColor"/><line x1="19" y1="5" x2="19" y2="19"/></svg></button>
   </div>
 </div>
+<div class="sheet" id="set"><div class="box"><h3>Ajustes</h3>
+  <button class="row" id="sSleep"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><span class="rl">Temporizador para dormir</span><span class="rv" id="sleepVal">Desactivado</span><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--mute)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+</div></div>
+<div class="sheet" id="eq"><div class="box"><h3>Ecualizador</h3><div class="pres" id="pres"></div><div id="eqRows"></div></div></div>
+<div class="toast" id="toast"></div>
 <div class="sheet" id="sheet"><div class="box"><h3>Temporizador de sueño</h3>
   <button data-m="15">15 minutos</button><button data-m="30">30 minutos</button><button data-m="45">45 minutos</button><button data-m="60">1 hora</button>
   <button data-m="eot">Al terminar esta canción</button><button data-m="0" class="off" id="sOff">Desactivar</button></div></div>
@@ -383,8 +399,8 @@ audio.ontimeupdate=()=>{
 audio.onloadedmetadata=()=>{$('#dur').textContent=fmt(audio.duration)};
 audio.onerror=()=>{if(cur!==null)$('#sub').textContent='No se pudo reproducir este archivo'};
 
-const PLAY='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
-const PAUSE='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>';
+const PLAY='<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><polygon points="7 3.5 20 12 7 20.5 7 3.5"/></svg>';
+const PAUSE='<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4.6" height="16" rx="1.6"/><rect x="13.4" y="4" width="4.6" height="16" rx="1.6"/></svg>';
 // Vistas: lista (inicio) y reproductor
 let view='list';
 function setView(v){
@@ -414,9 +430,6 @@ function ui(){
   $('#play').innerHTML=on?PAUSE:PLAY;$('#mPlay').innerHTML=on?PAUSE:PLAY;$('#app').classList.toggle('has',cur!==null);
   $('#play').setAttribute('aria-label',on?'Pausar':'Reproducir');
   const cs=songs.find(x=>x.id===cur),fv=!!(cs&&isFav(cs));$('#pFav').classList.toggle('on',fv);$('#pFav').setAttribute('aria-pressed',fv);
-  $('#shuf').classList.toggle('on',shuffle);
-  $('#rep').classList.toggle('on',repeat>0);
-  $('#rep').textContent=repeat===2?'↻¹':'↻';
   if(cur===null){$('#pbg').style.opacity=0;$('#mprog').style.width='0';$('#lab').classList.remove('on');$('#md').style.background='';setTitle('Elige una canción');$('#sub').textContent='Tu música, sin conexión';$('#cur').textContent='0:00';$('#dur').textContent='0:00';$('#seek').value=0;paint($('#seek'))}
 }
 
@@ -424,8 +437,6 @@ function ui(){
 $('#play').onclick=toggle;
 $('#next').onclick=()=>step(1);
 $('#prev').onclick=()=>step(-1);
-$('#shuf').onclick=()=>{shuffle=!shuffle;ui()};
-$('#rep').onclick=()=>{repeat=(repeat+1)%3;ui()};
 const seek=$('#seek');
 seek.oninput=()=>{drag=true;paint(seek);if(audio.duration)$('#cur').textContent=fmt(seek.value/1000*audio.duration)};
 seek.onchange=()=>{if(audio.duration)audio.currentTime=seek.value/1000*audio.duration;drag=false};
@@ -437,6 +448,37 @@ $('#pFav').onclick=()=>{const s=songs.find(x=>x.id===cur);if(s)toggleFav(s)};
 const chips=()=>{$('#fAll').classList.toggle('on',!onlyFav);$('#fFav').classList.toggle('on',onlyFav)};
 $('#fAll').onclick=()=>{onlyFav=false;chips();render()};
 $('#fFav').onclick=()=>{onlyFav=true;chips();render()};
+// Aviso corto en pantalla
+let toastT;
+function showToast(t){const e=$('#toast');e.textContent=t;e.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>e.classList.remove('show'),1400)}
+// Modo de reproducción: repetir todas / repetir una / aleatorio
+const MODES=[{n:'Repetir todas',i:'<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg>'},{n:'Repetir una',i:'<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/><path d="M11 10h1v4"/></svg>'},{n:'Aleatorio',i:'<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 18h1.4c1.3 0 2.5-.6 3.3-1.7l6.1-8.6c.7-1.1 2-1.7 3.3-1.7H22"/><path d="m18 2 4 4-4 4"/><path d="M2 6h1.9c1.5 0 2.9.9 3.6 2.2"/><path d="M22 18h-5.9c-1.3 0-2.6-.7-3.3-1.8l-.5-.8"/><path d="m18 14 4 4-4 4"/></svg>'}];
+let mode=+LS.get('vin_mode',0)||0;if(mode<0||mode>2)mode=0;
+function setMode(m,say){
+  mode=m;shuffle=m===2;repeat=m===1?2:1;LS.set('vin_mode',m);
+  const b=$('#pMode');b.innerHTML=MODES[m].i;b.classList.toggle('on',m>0);b.setAttribute('aria-label',MODES[m].n);
+  if(say)showToast(MODES[m].n);
+}
+$('#pMode').onclick=()=>setMode((mode+1)%3,true);
+setMode(mode,false);
+// Ecualizador
+const EQF=[60,230,910,3600,14000],EQN=['60 Hz','230 Hz','910 Hz','3.6 kHz','14 kHz'];
+const PRE=[['Normal',[0,0,0,0,0]],['Graves',[6,4,0,0,0]],['Voces',[-2,-1,3,4,1]],['Agudos',[0,0,1,4,6]],['Rock',[4,2,-2,3,4]]];
+let eqv=LS.get('vin_eq',[0,0,0,0,0]);if(!Array.isArray(eqv)||eqv.length!==5)eqv=[0,0,0,0,0];
+let eqNodes=null;
+const dbTxt=v=>(v>0?'+':'')+v+' dB';
+function applyEq(){if(eqNodes)eqNodes.forEach((n,i)=>n.gain.value=eqv[i]);$('#pEq').classList.toggle('on',eqv.some(v=>v!==0));LS.set('vin_eq',eqv)}
+function marcaPre(){$('#pres').querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c.dataset.p===eqv.join()))}
+function buildEq(){
+  $('#pres').innerHTML=PRE.map(([n,v])=>`<button class="chip" data-p="${v.join()}">${n}</button>`).join('');marcaPre();
+  $('#eqRows').innerHTML=EQN.map((n,i)=>`<div class="eqr"><span>${n}</span><input type="range" min="-12" max="12" step="1" value="${eqv[i]}" data-i="${i}"><b>${dbTxt(eqv[i])}</b></div>`).join('');
+  $('#eqRows').querySelectorAll('input').forEach(r=>paint(r));
+}
+$('#pEq').onclick=()=>{buildEq();$('#eq').classList.add('show')};
+$('#pres').onclick=e=>{const b=e.target.closest('button');if(!b)return;eqv=b.dataset.p.split(',').map(Number);applyEq();buildEq()};
+$('#eqRows').oninput=e=>{const r=e.target,i=+r.dataset.i;eqv[i]=+r.value;paint(r);r.nextElementSibling.textContent=dbTxt(eqv[i]);applyEq();marcaPre()};
+$('#eq').onclick=e=>{if(e.target.id==='eq')$('#eq').classList.remove('show')};
+applyEq();
 // Menú ⋮ y velocidad de reproducción
 const SPEEDS=[0.5,0.75,1,1.25,1.5,1.75,2];
 const spTxt=v=>v===1?'Normal':v+'x';
@@ -460,9 +502,8 @@ setSpeed(speed);
 // Temporizador de sueño
 let sleepT=null,sleepEnd=0,sleepEOT=false;
 function updSleep(){
-  const b=$('#pSleep');
-  $('#sLbl').textContent=sleepEnd?Math.max(1,Math.ceil((sleepEnd-Date.now())/60000))+' m':sleepEOT?'Fin':'';
-  b.classList.toggle('on',!!(sleepEnd||sleepEOT));
+  $('#sleepVal').textContent=sleepEnd?Math.max(1,Math.ceil((sleepEnd-Date.now())/60000))+' min':sleepEOT?'Al terminar la canción':'Desactivado';
+  $('#gear').classList.toggle('on',!!(sleepEnd||sleepEOT));
 }
 function setSleep(m){
   clearTimeout(sleepT);sleepT=null;sleepEnd=0;sleepEOT=false;audio.volume=1;
@@ -471,7 +512,9 @@ function setSleep(m){
   updSleep();
 }
 function sleepNow(){audio.pause();setSleep(0)}
-$('#pSleep').onclick=()=>$('#sheet').classList.add('show');
+$('#gear').onclick=()=>$('#set').classList.add('show');
+$('#set').onclick=e=>{if(e.target.id==='set')$('#set').classList.remove('show')};
+$('#sSleep').onclick=()=>{$('#set').classList.remove('show');$('#sheet').classList.add('show')};
 $('#sheet').onclick=e=>{
   const b=e.target.closest('button');
   if(b)setSleep(b.dataset.m==='eot'?'eot':+b.dataset.m);
@@ -507,7 +550,8 @@ function startViz(){
   try{
     ac=new (window.AudioContext||window.webkitAudioContext)();
     const src=ac.createMediaElementSource(audio);an=ac.createAnalyser();an.fftSize=64;
-    src.connect(an);an.connect(ac.destination);draw();
+    eqNodes=EQF.map((f,i)=>{const n=ac.createBiquadFilter();n.type=i===0?'lowshelf':i===4?'highshelf':'peaking';n.frequency.value=f;if(i>0&&i<4)n.Q.value=1;n.gain.value=eqv[i];return n});
+    let nd=src;eqNodes.forEach(n=>{nd.connect(n);nd=n});nd.connect(an);an.connect(ac.destination);draw();
   }catch(e){}
 }
 function draw(){
